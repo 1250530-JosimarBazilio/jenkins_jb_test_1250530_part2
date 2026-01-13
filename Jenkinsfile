@@ -377,17 +377,15 @@ pipeline {
                     expression { params.REQUIRE_APPROVAL == true }
                 }
             }
-            options {
-                timeout(time: Integer.parseInt(APPROVAL_TIMEOUT_HOURS), unit: 'HOURS')
-            }
             steps {
-                script {
-                    def approvalResult = input(
-                        id: 'bluegreen-traffic-switch-approval',
-                        message: '🚀 Approve Traffic Switch to GREEN?',
-                        submitter: 'admin,devops,release-manager',
-                        submitterParameter: 'approver',
-                        parameters: [
+                timeout(time: Integer.parseInt(APPROVAL_TIMEOUT_HOURS), unit: 'HOURS') {
+                    script {
+                        def approvalResult = input(
+                            id: 'bluegreen-traffic-switch-approval',
+                            message: '🚀 Approve Traffic Switch to GREEN?',
+                            submitter: 'admin,devops,release-manager',
+                            submitterParameter: 'approver',
+                            parameters: [
                             choice(
                                 name: 'APPROVAL_DECISION',
                                 choices: ['Approve', 'Reject'],
