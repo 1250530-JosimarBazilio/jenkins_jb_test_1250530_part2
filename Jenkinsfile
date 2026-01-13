@@ -8,62 +8,62 @@ pipeline {
         APPROVAL_TIMEOUT_HOURS = '24'
         APPROVAL_EMAIL = "${env.APPROVAL_EMAIL ?: '1250530@isep.ipp.pt'}"
         DEPLOYER_EMAIL = "${env.BUILD_USER_EMAIL ?: '1250530@isep.ipp.pt'}"
+    pipeline {
+        agent any
+
+        environment {
+            APP_NAME = 'lms-books'
+            DOCKER_IMAGE = 'lms-books'
+            // Email configuration for production approval
+            APPROVAL_TIMEOUT_HOURS = '24'
+            APPROVAL_EMAIL = "${env.APPROVAL_EMAIL ?: '1250530@isep.ipp.pt'}"
+            DEPLOYER_EMAIL = "${env.BUILD_USER_EMAIL ?: '1250530@isep.ipp.pt'}"
+        }
+
+        tools {
+            jdk 'jdk-17'
+            maven 'maven-3'
+        }
+
+        options {
+            // Abort pipeline if approval is not given within timeout
+            timeout(time: 48, unit: 'HOURS')
+        }
+
+        stages {
+            // ...existing code...
+        }
     }
 
-    tools {
-        jdk 'jdk-17'
-        maven 'maven-3'
+    post {
+        success {
+            echo "Pipeline OK para branch: ${env.BRANCH_NAME}"
+        }
+        failure {
+            script {
+                echo "Falha na branch ${env.BRANCH_NAME} — rollback executado"
+                sh 'docker compose down -v || true'
+                // Send failure notification
+                emailext(
+                    subject: "❌ PIPELINE FAILED - ${APP_NAME} #${BUILD_NUMBER}",
+                    body: """
+                        <html>
+                        <body style="font-family: Arial, sans-serif;">
+                            <h2 style="color: #dc3545;">❌ Pipeline Failed</h2>
+                            <p>The pipeline for <strong>${APP_NAME}</strong> has failed.</p>
+                            <p><strong>Branch:</strong> ${BRANCH_NAME}</p>
+                            <p><strong>Build:</strong> <a href="${BUILD_URL}">#${BUILD_NUMBER}</a></p>
+                            <p>Please check the build logs for more details.</p>
+                        </body>
+                        </html>
+                    """,
+                    to: "${APPROVAL_EMAIL},${DEPLOYER_EMAIL}",
+                    mimeType: 'text/html',
+                    attachLog: true
+                )
+            }
+        }
     }
-
-    options {
-        // Abort pipeline if approval is not given within timeout
-        timeout(time: 48, unit: 'HOURS')
-    }
-
-    stages {
-
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Build & Unit Tests') {
-            when {
-                branch 'main'
-            }
-            steps {
-                sh 'mvn clean test -B'
-            }
-        }
-
-        stage('Build (Staging)') {
-            when {
-                branch 'staging'
-            }
-            steps {
-                sh 'mvn clean package -DskipTests -B'
-            }
-        }
-
-        stage('Integration Tests (Staging)') {
-            when {
-                branch 'staging'
-            }
-            steps {
-                sh '''
-                  docker compose up -d postgres_books rabbitmq
-                  mvn verify -Pintegration-tests
-                '''
-            }
-            post {
-                always {
-                    sh 'docker compose down -v'
-                }
-            }
-        }
-
-        stage('Build Docker Image (Staging)') {
             when {
                 branch 'staging'
             }
