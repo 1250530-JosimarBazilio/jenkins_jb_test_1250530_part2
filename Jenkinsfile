@@ -1,31 +1,9 @@
-// ===========================================
-// Jenkinsfile - Blue/Green Deployment with Automatic Rollback
-// ===========================================
-// Este pipeline implementa a estratégia Blue/Green deployment
-// com smoke tests e rollback automático se forem detectados problemas
-//
-// Labels de Release:
-// - release-strategy: blue-green
-// - rollback-enabled: true
-// - rollback-trigger: smoke-test-failure | health-check-failure
-
 pipeline {
     agent any
 
     environment {
         APP_NAME = 'lms-books'
         DOCKER_IMAGE = 'lms-books'
-        DOCKER_REGISTRY = "${env.DOCKER_REGISTRY ?: 'localhost:5000'}"
-        
-        // Blue/Green versioning
-        BLUE_VERSION = "${env.BLUE_VERSION ?: 'v1.0.0'}"
-        GREEN_VERSION = "${env.GREEN_VERSION ?: 'v2.0.0'}"
-        
-        // Rollback configuration
-        ROLLBACK_ENABLED = 'true'
-        SMOKE_TEST_THRESHOLD = '80'
-        HEALTH_CHECK_TIMEOUT = '120'
-        
         // Email configuration for production approval
         APPROVAL_TIMEOUT_HOURS = '24'
         APPROVAL_EMAIL = "${env.APPROVAL_EMAIL ?: '1250530@isep.ipp.pt'}"
@@ -42,260 +20,94 @@ pipeline {
         timeout(time: 48, unit: 'HOURS')
     }
 
-    parameters {
-        choice(
-            name: 'DEPLOYMENT_SLOT',
-            choices: ['green', 'blue'],
-            description: 'Target deployment slot'
-        )
-        booleanParam(
-            name: 'SIMULATE_ERROR',
-            defaultValue: false,
-            description: 'Simulate errors in GREEN deployment for rollback testing'
-        )
-        booleanParam(
-            name: 'SKIP_SMOKE_TESTS',
-            defaultValue: false,
-            description: 'Skip smoke tests (not recommended)'
-        )
-        booleanParam(
-            name: 'REQUIRE_APPROVAL',
-            defaultValue: true,
-            description: 'Require manual email approval before switching traffic (production safety)'
-        )
-        choice(
-            name: 'PLATFORM',
-            choices: ['docker', 'k8s'],
-            description: 'Deployment platform'
-        )
-    }
-
     stages {
 
         stage('Checkout') {
             steps {
                 checkout scm
-                script {
-                    echo "============================================"
-                    echo "BLUE/GREEN DEPLOYMENT PIPELINE"
-                    echo "============================================"
-                    echo "Target Slot: ${params.DEPLOYMENT_SLOT}"
-                    echo "Simulate Error: ${params.SIMULATE_ERROR}"
-                    echo "Require Approval: ${params.REQUIRE_APPROVAL}"
-                    echo "Platform: ${params.PLATFORM}"
-                    echo "============================================"
-                }
             }
         }
 
         stage('Build & Unit Tests') {
+            when {
+                branch 'main'
+            }
             steps {
                 sh 'mvn clean test -B'
             }
-            post {
-                failure {
-                    script {
-                        currentBuild.description = "Build failed - Unit tests"
-                    }
-                }
-            }
         }
 
-        stage('Package Application') {
-            steps {
-                sh 'mvn package -DskipTests -B'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    def slot = params.DEPLOYMENT_SLOT
-                    def version = slot == 'green' ? env.GREEN_VERSION : env.BLUE_VERSION
-                    def profile = params.SIMULATE_ERROR && slot == 'green' ? 'green-error' : slot
-                    
-                    echo "Building Docker image for ${slot} (version: ${version})"
-                    echo "Spring Profile: ${profile}"
-                    
-                    sh """
-                        docker build \
-                            --build-arg SPRING_PROFILES_ACTIVE=postgres,${profile} \
-                            --build-arg DEPLOYMENT_SLOT=${slot} \
-                            --build-arg VERSION=${version} \
-                            --label "deployment.slot=${slot}" \
-                            --label "deployment.version=${version}" \
-                            --label "deployment.release-strategy=blue-green" \
-                            --label "deployment.rollback-enabled=true" \
-                            --label "deployment.simulate-error=${params.SIMULATE_ERROR}" \
-                            -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${version} \
-                            -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${slot}-latest \
-                            .
-                    """
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
+        stage('Build (Staging)') {
             when {
-                expression { env.DOCKER_REGISTRY != 'localhost:5000' }
+                branch 'staging'
             }
             steps {
-                script {
-                    def slot = params.DEPLOYMENT_SLOT
-                    def version = slot == 'green' ? env.GREEN_VERSION : env.BLUE_VERSION
-                    
-                    sh """
-                        docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${version}
-                        docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${slot}-latest
-                    """
-                }
+                sh 'mvn clean package -DskipTests -B'
             }
         }
 
-        stage('Deploy to Target Slot') {
-            steps {
-                script {
-                    def slot = params.DEPLOYMENT_SLOT
-                    def version = slot == 'green' ? env.GREEN_VERSION : env.BLUE_VERSION
-                    def profile = params.SIMULATE_ERROR && slot == 'green' ? 'green-error' : slot
-                    
-                    echo "Deploying to ${slot} slot..."
-                    
-                    if (params.PLATFORM == 'docker') {
-                        sh """
-                            # Set environment variables for docker-compose
-                            export ${slot.toUpperCase()}_VERSION=${version}
-                            export SPRING_PROFILES_ACTIVE=postgres,${profile}
-                            export DEPLOYMENT_SLOT=${slot}
-                            
-                            # Deploy only the target slot
-                            docker compose -f docker-compose.bluegreen.yml up -d lms-books-${slot}
-                        """
-                    } else {
-                        sh """
-                            # Kubernetes deployment
-                            export ${slot.toUpperCase()}_VERSION=${version}
-                            
-                            # Apply deployment
-                            envsubst < k8s/lms-books-bluegreen.yaml | kubectl apply -f - --selector=slot=${slot}
-                            
-                            # Wait for rollout
-                            kubectl rollout status deployment/lms-books-${slot} -n lms-books --timeout=${HEALTH_CHECK_TIMEOUT}s
-                        """
-                    }
-                }
-            }
-        }
-
-        stage('Health Check') {
-            steps {
-                script {
-                    def slot = params.DEPLOYMENT_SLOT
-                    def healthUrl = slot == 'green' ? 'http://localhost:8091' : 'http://localhost:8090'
-                    
-                    if (params.PLATFORM == 'k8s') {
-                        healthUrl = "http://lms-books-${slot}.lms-books.svc.cluster.local:8081"
-                    }
-                    
-                    echo "Waiting for ${slot} to be healthy..."
-                    
-                    def healthy = false
-                    def attempts = 0
-                    def maxAttempts = 30
-                    
-                    while (!healthy && attempts < maxAttempts) {
-                        try {
-                            def response = sh(
-                                script: "curl -s -o /dev/null -w '%{http_code}' ${healthUrl}/api/books/health",
-                                returnStdout: true
-                            ).trim()
-                            
-                            if (response == '200') {
-                                healthy = true
-                                echo "Health check passed!"
-                            }
-                        } catch (Exception e) {
-                            echo "Health check attempt ${attempts + 1}/${maxAttempts} failed"
-                        }
-                        
-                        if (!healthy) {
-                            sleep(5)
-                            attempts++
-                        }
-                    }
-                    
-                    if (!healthy) {
-                        error("Health check failed after ${maxAttempts} attempts")
-                    }
-                }
-            }
-        }
-
-        stage('Smoke Tests') {
+        stage('Integration Tests (Staging)') {
             when {
-                expression { !params.SKIP_SMOKE_TESTS }
+                branch 'staging'
             }
             steps {
-                script {
-                    def slot = params.DEPLOYMENT_SLOT
-                    def greenUrl = 'http://localhost:8091'
-                    def blueUrl = 'http://localhost:8090'
-                    
-                    if (params.PLATFORM == 'k8s') {
-                        greenUrl = 'http://localhost:30091'  // NodePort
-                        blueUrl = 'http://localhost:30090'
-                    }
-                    
-                    echo "Running smoke tests..."
-                    
-                    def result = sh(
-                        script: """
-                            chmod +x scripts/smoke-test-rollback.sh
-                            ./scripts/smoke-test-rollback.sh ${params.PLATFORM} ${greenUrl} ${blueUrl}
-                        """,
-                        returnStatus: true
-                    )
-                    
-                    if (result != 0) {
-                        echo "Smoke tests failed - Rollback will be triggered"
-                        env.ROLLBACK_REQUIRED = 'true'
-                        error("Smoke tests failed")
-                    }
-                }
+                sh '''
+                  docker compose up -d postgres_books rabbitmq
+                  mvn verify -Pintegration-tests
+                '''
             }
             post {
-                failure {
-                    script {
-                        env.ROLLBACK_REQUIRED = 'true'
-                    }
+                always {
+                    sh 'docker compose down -v'
                 }
+            }
+        }
+
+        stage('Build Docker Image (Staging)') {
+            when {
+                branch 'staging'
+            }
+            steps {
+                sh 'docker compose -f docker-compose.staging.yml build lms-books-staging'
+            }
+        }
+
+        stage('Build Docker Image (Production)') {
+            when {
+                branch 'production'
+            }
+            steps {
+                sh 'docker compose -f docker-compose.production.yml build lms-books-prod'
+            }
+        }
+
+        stage('Deploy (Staging)') {
+            when {
+                branch 'staging'
+            }
+            steps {
+                sh '''
+                  docker compose -f docker-compose.staging.yml up -d
+                '''
             }
         }
 
         stage('Request Production Approval') {
             when {
-                allOf {
-                    expression { params.DEPLOYMENT_SLOT == 'green' }
-                    expression { env.ROLLBACK_REQUIRED != 'true' }
-                    expression { params.REQUIRE_APPROVAL == true }
+                anyOf {
+                    branch 'staging'
+                    branch 'production'
                 }
             }
             steps {
                 script {
-                    def version = env.GREEN_VERSION
-                    
                     // Send email notification requesting approval
                     emailext(
-                        subject: "🚀 BLUE/GREEN PRODUCTION APPROVAL REQUIRED - ${APP_NAME} ${version}",
+                        subject: "🚀 PRODUCTION DEPLOYMENT APPROVAL REQUIRED - ${APP_NAME} #${BUILD_NUMBER}",
                         body: """
                             <html>
                             <body style="font-family: Arial, sans-serif;">
-                                <h2 style="color: #ff6600;">⚠️ Production Traffic Switch Requires Approval</h2>
-                                
-                                <div style="background-color: #e7f3ff; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                                    <h3 style="margin: 0; color: #0066cc;">Blue/Green Deployment</h3>
-                                    <p style="margin: 5px 0;">Ready to switch traffic from <strong style="color: #007bff;">BLUE</strong> to <strong style="color: #28a745;">GREEN</strong></p>
-                                </div>
+                                <h2 style="color: #ff6600;">⚠️ Production Deployment Requires Approval</h2>
                                 
                                 <table style="border-collapse: collapse; width: 100%; max-width: 600px;">
                                     <tr style="background-color: #f2f2f2;">
@@ -303,48 +115,37 @@ pipeline {
                                         <td style="padding: 10px; border: 1px solid #ddd;">${APP_NAME}</td>
                                     </tr>
                                     <tr>
-                                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>Current Slot</strong></td>
-                                        <td style="padding: 10px; border: 1px solid #ddd;"><span style="color: #007bff;">● BLUE (${BLUE_VERSION})</span></td>
-                                    </tr>
-                                    <tr style="background-color: #f2f2f2;">
-                                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>Target Slot</strong></td>
-                                        <td style="padding: 10px; border: 1px solid #ddd;"><span style="color: #28a745;">● GREEN (${version})</span></td>
-                                    </tr>
-                                    <tr>
                                         <td style="padding: 10px; border: 1px solid #ddd;"><strong>Build Number</strong></td>
                                         <td style="padding: 10px; border: 1px solid #ddd;">#${BUILD_NUMBER}</td>
                                     </tr>
                                     <tr style="background-color: #f2f2f2;">
-                                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>Platform</strong></td>
-                                        <td style="padding: 10px; border: 1px solid #ddd;">${params.PLATFORM}</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>Branch</strong></td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${BRANCH_NAME}</td>
                                     </tr>
                                     <tr>
-                                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>Smoke Tests</strong></td>
-                                        <td style="padding: 10px; border: 1px solid #ddd;">✅ Passed</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>Triggered By</strong></td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${BUILD_USER ?: 'Automated'}</td>
                                     </tr>
                                     <tr style="background-color: #f2f2f2;">
-                                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>Health Check</strong></td>
-                                        <td style="padding: 10px; border: 1px solid #ddd;">✅ Healthy</td>
-                                    </tr>
-                                    <tr>
                                         <td style="padding: 10px; border: 1px solid #ddd;"><strong>Approval Timeout</strong></td>
                                         <td style="padding: 10px; border: 1px solid #ddd;">${APPROVAL_TIMEOUT_HOURS} hours</td>
                                     </tr>
                                 </table>
                                 
-                                <h3 style="color: #0066cc; margin-top: 20px;">Action Required:</h3>
-                                <p>Please review and approve or reject this traffic switch:</p>
+                                <h3>Build Artifacts:</h3>
+                                <ul>
+                                    <li>Docker Image: ${DOCKER_IMAGE}:${BUILD_NUMBER}</li>
+                                    <li>Target: Production Environment</li>
+                                </ul>
+                                
+                                <h3 style="color: #0066cc;">Action Required:</h3>
+                                <p>Please review and approve or reject this deployment:</p>
                                 <p>
                                     <a href="${BUILD_URL}input" 
-                                       style="background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">
-                                        ✅ Review & Approve Traffic Switch
+                                       style="background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin-right: 10px;">
+                                        ✅ Review & Approve
                                     </a>
                                 </p>
-                                
-                                <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin-top: 20px;">
-                                    <strong>⚠️ Note:</strong> If rejected or timed out, the GREEN deployment will remain available but traffic will continue to flow to BLUE. 
-                                    Automatic rollback is available if issues are detected.
-                                </div>
                                 
                                 <hr style="margin-top: 30px;">
                                 <p style="color: #666; font-size: 12px;">
@@ -361,7 +162,7 @@ pipeline {
                     )
                     
                     echo "============================================"
-                    echo "WAITING FOR PRODUCTION TRAFFIC SWITCH APPROVAL"
+                    echo "WAITING FOR PRODUCTION DEPLOYMENT APPROVAL"
                     echo "============================================"
                     echo "An email has been sent to: ${APPROVAL_EMAIL}"
                     echo "Timeout: ${APPROVAL_TIMEOUT_HOURS} hours"
@@ -371,35 +172,31 @@ pipeline {
 
         stage('Production Approval Gate') {
             when {
-                allOf {
-                    expression { params.DEPLOYMENT_SLOT == 'green' }
-                    expression { env.ROLLBACK_REQUIRED != 'true' }
-                    expression { params.REQUIRE_APPROVAL == true }
+                anyOf {
+                    branch 'staging'
+                    branch 'production'
                 }
             }
+            options {
+                timeout(time: "${APPROVAL_TIMEOUT_HOURS}".toInteger(), unit: 'HOURS')
+            }
             steps {
-                timeout(time: Integer.parseInt(APPROVAL_TIMEOUT_HOURS), unit: 'HOURS') {
-                    script {
-                        def approvalResult = input(
-                            id: 'bluegreen-traffic-switch-approval',
-                            message: '🚀 Approve Traffic Switch to GREEN?',
-                            submitter: 'admin,devops,release-manager',
-                            submitterParameter: 'approver',
-                            parameters: [
+                script {
+                    def approvalResult = input(
+                        id: 'production-deployment-approval',
+                        message: '🚀 Approve Production Deployment?',
+                        submitter: 'admin,devops,release-manager',
+                        submitterParameter: 'approver',
+                        parameters: [
                             choice(
                                 name: 'APPROVAL_DECISION',
                                 choices: ['Approve', 'Reject'],
-                                description: 'Approve or Reject the traffic switch to GREEN'
+                                description: 'Approve or Reject this production deployment'
                             ),
                             text(
                                 name: 'APPROVAL_NOTES',
                                 defaultValue: '',
                                 description: 'Optional notes for this deployment decision'
-                            ),
-                            booleanParam(
-                                name: 'ENABLE_CANARY',
-                                defaultValue: false,
-                                description: 'Enable canary deployment (gradual traffic shift) instead of full switch'
                             )
                         ]
                     )
@@ -407,23 +204,18 @@ pipeline {
                     env.APPROVER = approvalResult.approver ?: 'Unknown'
                     env.APPROVAL_DECISION = approvalResult.APPROVAL_DECISION
                     env.APPROVAL_NOTES = approvalResult.APPROVAL_NOTES ?: 'No notes provided'
-                    env.ENABLE_CANARY = approvalResult.ENABLE_CANARY
                     
                     if (env.APPROVAL_DECISION == 'Reject') {
                         // Send rejection notification
                         emailext(
-                            subject: "❌ BLUE/GREEN TRAFFIC SWITCH REJECTED - ${APP_NAME} #${BUILD_NUMBER}",
+                            subject: "❌ PRODUCTION DEPLOYMENT REJECTED - ${APP_NAME} #${BUILD_NUMBER}",
                             body: """
                                 <html>
                                 <body style="font-family: Arial, sans-serif;">
-                                    <h2 style="color: #dc3545;">❌ Traffic Switch Rejected</h2>
-                                    <p>Traffic will continue to flow to <strong style="color: #007bff;">BLUE</strong>.</p>
+                                    <h2 style="color: #dc3545;">❌ Production Deployment Rejected</h2>
                                     <p><strong>Rejected by:</strong> ${env.APPROVER}</p>
                                     <p><strong>Notes:</strong> ${env.APPROVAL_NOTES}</p>
                                     <p><strong>Build:</strong> <a href="${BUILD_URL}">#${BUILD_NUMBER}</a></p>
-                                    <div style="background-color: #e7f3ff; padding: 10px; border-radius: 5px; margin-top: 15px;">
-                                        <strong>Note:</strong> The GREEN deployment is still available for testing.
-                                    </div>
                                 </body>
                                 </html>
                             """,
@@ -431,30 +223,27 @@ pipeline {
                             mimeType: 'text/html'
                         )
                         
-                        currentBuild.description = "Traffic switch rejected by ${env.APPROVER}"
-                        currentBuild.result = 'UNSTABLE'
-                        env.SKIP_TRAFFIC_SWITCH = 'true'
-                    } else {
-                        echo "============================================"
-                        echo "TRAFFIC SWITCH APPROVED"
-                        echo "============================================"
-                        echo "Approved by: ${env.APPROVER}"
-                        echo "Notes: ${env.APPROVAL_NOTES}"
-                        echo "Canary Mode: ${env.ENABLE_CANARY}"
+                        error("Production deployment rejected by ${env.APPROVER}. Reason: ${env.APPROVAL_NOTES}")
                     }
+                    
+                    echo "============================================"
+                    echo "PRODUCTION DEPLOYMENT APPROVED"
+                    echo "============================================"
+                    echo "Approved by: ${env.APPROVER}"
+                    echo "Notes: ${env.APPROVAL_NOTES}"
                 }
             }
             post {
                 aborted {
                     script {
                         emailext(
-                            subject: "⏰ BLUE/GREEN APPROVAL TIMEOUT - ${APP_NAME} #${BUILD_NUMBER}",
+                            subject: "⏰ PRODUCTION DEPLOYMENT APPROVAL TIMEOUT - ${APP_NAME} #${BUILD_NUMBER}",
                             body: """
                                 <html>
                                 <body style="font-family: Arial, sans-serif;">
                                     <h2 style="color: #ffc107;">⏰ Approval Timeout Expired</h2>
-                                    <p>The traffic switch request was not approved within ${APPROVAL_TIMEOUT_HOURS} hours.</p>
-                                    <p>Traffic will continue to flow to <strong style="color: #007bff;">BLUE</strong>.</p>
+                                    <p>The production deployment request for <strong>${APP_NAME}</strong> was not approved within ${APPROVAL_TIMEOUT_HOURS} hours.</p>
+                                    <p>The deployment has been automatically cancelled.</p>
                                     <p><strong>Build:</strong> <a href="${BUILD_URL}">#${BUILD_NUMBER}</a></p>
                                 </body>
                                 </html>
@@ -467,58 +256,52 @@ pipeline {
             }
         }
 
-        stage('Switch Traffic to GREEN') {
+        stage('Deploy (Production)') {
             when {
                 allOf {
-                    expression { params.DEPLOYMENT_SLOT == 'green' }
-                    expression { env.ROLLBACK_REQUIRED != 'true' }
-                    expression { env.SKIP_TRAFFIC_SWITCH != 'true' }
                     anyOf {
-                        expression { params.REQUIRE_APPROVAL == false }
-                        expression { env.APPROVAL_DECISION == 'Approve' }
+                        branch 'staging'
+                        branch 'production'
                     }
+                    expression { env.APPROVAL_DECISION == 'Approve' }
                 }
             }
             steps {
                 script {
-                    echo "Switching traffic to GREEN..."
-                    echo "Approved by: ${env.APPROVER ?: 'Auto-approved (approval disabled)'}"
+                    echo "============================================"
+                    echo "DEPLOYING TO PRODUCTION"
+                    echo "============================================"
+                    echo "Approved by: ${env.APPROVER}"
                     
-                    sh """
-                        chmod +x scripts/bluegreen-switch.sh
-                        ./scripts/bluegreen-switch.sh green ${params.PLATFORM}
-                    """
-                    
-                    echo "Traffic switched to GREEN successfully!"
+                    sh '''
+                      docker compose -f docker-compose.production.yml up -d
+                    '''
                     
                     // Send success notification
                     emailext(
-                        subject: "✅ TRAFFIC SWITCHED TO GREEN - ${APP_NAME} #${BUILD_NUMBER}",
+                        subject: "✅ PRODUCTION DEPLOYMENT SUCCESSFUL - ${APP_NAME} #${BUILD_NUMBER}",
                         body: """
                             <html>
                             <body style="font-family: Arial, sans-serif;">
-                                <h2 style="color: #28a745;">✅ Traffic Successfully Switched to GREEN</h2>
+                                <h2 style="color: #28a745;">✅ Production Deployment Successful</h2>
                                 <table style="border-collapse: collapse; width: 100%; max-width: 600px;">
                                     <tr style="background-color: #f2f2f2;">
                                         <td style="padding: 10px; border: 1px solid #ddd;"><strong>Application</strong></td>
                                         <td style="padding: 10px; border: 1px solid #ddd;">${APP_NAME}</td>
                                     </tr>
                                     <tr>
-                                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>Active Slot</strong></td>
-                                        <td style="padding: 10px; border: 1px solid #ddd;"><span style="color: #28a745;">● GREEN (${GREEN_VERSION})</span></td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>Build</strong></td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">#${BUILD_NUMBER}</td>
                                     </tr>
                                     <tr style="background-color: #f2f2f2;">
                                         <td style="padding: 10px; border: 1px solid #ddd;"><strong>Approved By</strong></td>
-                                        <td style="padding: 10px; border: 1px solid #ddd;">${APPROVER ?: 'Auto-approved'}</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${APPROVER}</td>
                                     </tr>
                                     <tr>
-                                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>Notes</strong></td>
-                                        <td style="padding: 10px; border: 1px solid #ddd;">${APPROVAL_NOTES ?: 'N/A'}</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>Approval Notes</strong></td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${APPROVAL_NOTES}</td>
                                     </tr>
                                 </table>
-                                <div style="background-color: #d4edda; padding: 15px; border-radius: 5px; margin-top: 20px;">
-                                    <strong>🔄 Rollback:</strong> If issues are detected, run the rollback script to switch back to BLUE.
-                                </div>
                             </body>
                             </html>
                         """,
@@ -528,104 +311,36 @@ pipeline {
                 }
             }
         }
-
-        stage('Automatic Rollback') {
-            when {
-                expression { env.ROLLBACK_REQUIRED == 'true' }
-            }
-            steps {
-                script {
-                    echo "============================================"
-                    echo "AUTOMATIC ROLLBACK TRIGGERED"
-                    echo "============================================"
-                    
-                    sh """
-                        chmod +x scripts/bluegreen-rollback.sh
-                        ./scripts/bluegreen-rollback.sh ${params.PLATFORM}
-                    """
-                    
-                    currentBuild.description = "Rollback executed - Tests failed"
-                    currentBuild.result = 'UNSTABLE'
-                }
-            }
-        }
-
-        stage('Post-Deployment Verification') {
-            when {
-                expression { env.ROLLBACK_REQUIRED != 'true' }
-            }
-            steps {
-                script {
-                    echo "Verifying deployment..."
-                    
-                    def activeSlot = sh(
-                        script: """
-                            if [ "${params.PLATFORM}" == "docker" ]; then
-                                grep -B1 "weight: 100" traefik/dynamic/bluegreen.yml | head -1 | grep -o 'blue\\|green' || echo "unknown"
-                            else
-                                kubectl get svc lms-books-service -n lms-books -o jsonpath='{.spec.selector.slot}'
-                            fi
-                        """,
-                        returnStdout: true
-                    ).trim()
-                    
-                    echo "Active deployment slot: ${activeSlot}"
-                    
-                    // Add labels/annotations
-                    if (params.PLATFORM == 'k8s') {
-                        sh """
-                            kubectl annotate deployment lms-books-${params.DEPLOYMENT_SLOT} -n lms-books \
-                                deployment.kubernetes.io/deployed-by="jenkins" \
-                                deployment.kubernetes.io/deployed-at="\$(date -Iseconds)" \
-                                deployment.kubernetes.io/build-number="${env.BUILD_NUMBER}" \
-                                --overwrite
-                        """
-                    }
-                }
-            }
-        }
     }
 
     post {
         success {
-            script {
-                if (env.ROLLBACK_REQUIRED == 'true') {
-                    echo "Pipeline completed with rollback"
-                } else {
-                    echo "============================================"
-                    echo "DEPLOYMENT SUCCESSFUL"
-                    echo "============================================"
-                    echo "Slot: ${params.DEPLOYMENT_SLOT}"
-                    echo "Version: ${params.DEPLOYMENT_SLOT == 'green' ? env.GREEN_VERSION : env.BLUE_VERSION}"
-                    echo "============================================"
-                }
-            }
+            echo "Pipeline OK para branch: ${env.BRANCH_NAME}"
         }
         failure {
             script {
-                echo "============================================"
-                echo "PIPELINE FAILED - EXECUTING ROLLBACK"
-                echo "============================================"
+                echo "Falha na branch ${env.BRANCH_NAME} — rollback executado"
+                sh 'docker compose down -v || true'
                 
-                // Attempt automatic rollback on failure
-                sh """
-                    if [ -f "scripts/bluegreen-rollback.sh" ]; then
-                        chmod +x scripts/bluegreen-rollback.sh
-                        ./scripts/bluegreen-rollback.sh ${params.PLATFORM} || true
-                    fi
-                """
-                
-                // Cleanup
-                sh 'docker compose -f docker-compose.bluegreen.yml down lms-books-${params.DEPLOYMENT_SLOT} || true'
+                // Send failure notification
+                emailext(
+                    subject: "❌ PIPELINE FAILED - ${APP_NAME} #${BUILD_NUMBER}",
+                    body: """
+                        <html>
+                        <body style="font-family: Arial, sans-serif;">
+                            <h2 style="color: #dc3545;">❌ Pipeline Failed</h2>
+                            <p>The pipeline for <strong>${APP_NAME}</strong> has failed.</p>
+                            <p><strong>Branch:</strong> ${BRANCH_NAME}</p>
+                            <p><strong>Build:</strong> <a href="${BUILD_URL}">#${BUILD_NUMBER}</a></p>
+                            <p>Please check the build logs for more details.</p>
+                        </body>
+                        </html>
+                    """,
+                    to: "${APPROVAL_EMAIL},${DEPLOYER_EMAIL}",
+                    mimeType: 'text/html',
+                    attachLog: true
+                )
             }
         }
-        always {
-            // Archive test results
-            junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
-            
-            // Cleanup workspace
-            cleanWs(cleanWhenNotBuilt: false, deleteDirs: true, disableDeferredWipeout: true)
-        }
     }
-}
 }
