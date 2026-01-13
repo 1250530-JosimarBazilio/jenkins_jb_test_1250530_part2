@@ -28,8 +28,8 @@ pipeline {
         
         // Email configuration for production approval
         APPROVAL_TIMEOUT_HOURS = '24'
-        APPROVAL_EMAIL = "${env.APPROVAL_EMAIL ?: '1250530@isep.ipp.pt'}"
-        DEPLOYER_EMAIL = "${env.BUILD_USER_EMAIL ?: '1250530@isep.ipp.pt'}"
+        APPROVAL_EMAIL = "${env.APPROVAL_EMAIL ?: '1250530@isepipp.pt'}"
+        DEPLOYER_EMAIL = "${env.BUILD_USER_EMAIL ?: '1250530@isepipp.pt'}"
     }
 
     tools {
@@ -378,14 +378,13 @@ pipeline {
                 }
             }
             steps {
-                timeout(time: Integer.parseInt(APPROVAL_TIMEOUT_HOURS), unit: 'HOURS') {
-                    script {
-                        def approvalResult = input(
-                            id: 'bluegreen-traffic-switch-approval',
-                            message: '🚀 Approve Traffic Switch to GREEN?',
-                            submitter: 'admin,devops,release-manager',
-                            submitterParameter: 'approver',
-                            parameters: [
+                script {
+                    def approvalResult = input(
+                        id: 'bluegreen-traffic-switch-approval',
+                        message: '🚀 Approve Traffic Switch to GREEN?',
+                        submitter: 'admin,devops,release-manager',
+                        submitterParameter: 'approver',
+                        parameters: [
                             choice(
                                 name: 'APPROVAL_DECISION',
                                 choices: ['Approve', 'Reject'],
@@ -442,7 +441,6 @@ pipeline {
                         echo "Notes: ${env.APPROVAL_NOTES}"
                         echo "Canary Mode: ${env.ENABLE_CANARY}"
                     }
-                  }
                 }
             }
             post {
