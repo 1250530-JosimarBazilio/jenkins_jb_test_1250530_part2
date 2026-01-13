@@ -6,8 +6,8 @@ pipeline {
         DOCKER_IMAGE = 'lms-books'
         // Email configuration for production approval
         APPROVAL_TIMEOUT_HOURS = '24'
-        APPROVAL_EMAIL = "${env.APPROVAL_EMAIL ?: 'basiliojosimar@gmail.com'}"
-        DEPLOYER_EMAIL = "${env.BUILD_USER_EMAIL ?: 'basiliojosimar@gmail.com'}"
+        APPROVAL_EMAIL = "${env.APPROVAL_EMAIL ?: '1250530@isep.ipp.pt'}"
+        DEPLOYER_EMAIL = "${env.BUILD_USER_EMAIL ?: '1250530@isep.ipp.pt'}"
     }
 
     tools {
