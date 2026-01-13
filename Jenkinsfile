@@ -21,7 +21,48 @@ pipeline {
     }
 
     stages {
-        // ...existing code...
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build & Unit Tests') {
+            when {
+                branch 'main'
+            }
+            steps {
+                sh 'mvn clean test -B'
+            }
+        }
+
+        stage('Build (Staging)') {
+            when {
+                branch 'staging'
+            }
+            steps {
+                sh 'mvn clean package -DskipTests -B'
+            }
+        }
+
+        stage('Integration Tests (Staging)') {
+            when {
+                branch 'staging'
+            }
+            steps {
+                sh '''
+                  docker compose up -d postgres_books rabbitmq
+                  mvn verify -Pintegration-tests
+                '''
+            }
+            post {
+                always {
+                    sh 'docker compose down -v'
+                }
+            }
+        }
+
         stage('Build Docker Image (Staging)') {
             when {
                 branch 'staging'
@@ -30,6 +71,7 @@ pipeline {
                 sh 'docker compose -f docker-compose.staging.yml build lms-books-staging'
             }
         }
+
         stage('Build Docker Image (Production)') {
             when {
                 branch 'production'
@@ -38,38 +80,6 @@ pipeline {
                 sh 'docker compose -f docker-compose.production.yml build lms-books-prod'
             }
         }
-        // ...restante dos stages...
-    }
-
-    post {
-        success {
-            echo "Pipeline OK para branch: ${env.BRANCH_NAME}"
-        }
-        failure {
-            script {
-                echo "Falha na branch ${env.BRANCH_NAME} — rollback executado"
-                sh 'docker compose down -v || true'
-                // Send failure notification
-                emailext(
-                    subject: "❌ PIPELINE FAILED - ${APP_NAME} #${BUILD_NUMBER}",
-                    body: """
-                        <html>
-                        <body style="font-family: Arial, sans-serif;">
-                            <h2 style="color: #dc3545;">❌ Pipeline Failed</h2>
-                            <p>The pipeline for <strong>${APP_NAME}</strong> has failed.</p>
-                            <p><strong>Branch:</strong> ${BRANCH_NAME}</p>
-                            <p><strong>Build:</strong> <a href="${BUILD_URL}">#${BUILD_NUMBER}</a></p>
-                            <p>Please check the build logs for more details.</p>
-                        </body>
-                        </html>
-                    """,
-                    to: "${APPROVAL_EMAIL},${DEPLOYER_EMAIL}",
-                    mimeType: 'text/html',
-                    attachLog: true
-                )
-            }
-        }
-    }
 
         stage('Deploy (Staging)') {
             when {
@@ -167,15 +177,17 @@ pipeline {
                     branch 'production'
                 }
             }
+            options {
+                timeout(time: "${APPROVAL_TIMEOUT_HOURS}".toInteger(), unit: 'HOURS')
+            }
             steps {
-                timeout(time: 24, unit: 'HOURS') {
-                    script {
-                        def approvalResult = input(
-                            id: 'production-deployment-approval',
-                            message: '🚀 Approve Production Deployment?',
-                            submitter: 'admin,devops,release-manager',
-                            submitterParameter: 'approver',
-                            parameters: [
+                script {
+                    def approvalResult = input(
+                        id: 'production-deployment-approval',
+                        message: '🚀 Approve Production Deployment?',
+                        submitter: 'admin,devops,release-manager',
+                        submitterParameter: 'approver',
+                        parameters: [
                             choice(
                                 name: 'APPROVAL_DECISION',
                                 choices: ['Approve', 'Reject'],
