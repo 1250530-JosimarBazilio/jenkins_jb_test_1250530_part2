@@ -8,31 +8,37 @@ pipeline {
         APPROVAL_TIMEOUT_HOURS = '24'
         APPROVAL_EMAIL = "${env.APPROVAL_EMAIL ?: '1250530@isep.ipp.pt'}"
         DEPLOYER_EMAIL = "${env.BUILD_USER_EMAIL ?: '1250530@isep.ipp.pt'}"
-    pipeline {
-        agent any
+    }
 
-        environment {
-            APP_NAME = 'lms-books'
-            DOCKER_IMAGE = 'lms-books'
-            // Email configuration for production approval
-            APPROVAL_TIMEOUT_HOURS = '24'
-            APPROVAL_EMAIL = "${env.APPROVAL_EMAIL ?: '1250530@isep.ipp.pt'}"
-            DEPLOYER_EMAIL = "${env.BUILD_USER_EMAIL ?: '1250530@isep.ipp.pt'}"
-        }
+    tools {
+        jdk 'jdk-17'
+        maven 'maven-3'
+    }
 
-        tools {
-            jdk 'jdk-17'
-            maven 'maven-3'
-        }
+    options {
+        // Abort pipeline if approval is not given within timeout
+        timeout(time: 48, unit: 'HOURS')
+    }
 
-        options {
-            // Abort pipeline if approval is not given within timeout
-            timeout(time: 48, unit: 'HOURS')
+    stages {
+        // ...existing code...
+        stage('Build Docker Image (Staging)') {
+            when {
+                branch 'staging'
+            }
+            steps {
+                sh 'docker compose -f docker-compose.staging.yml build lms-books-staging'
+            }
         }
-
-        stages {
-            // ...existing code...
+        stage('Build Docker Image (Production)') {
+            when {
+                branch 'production'
+            }
+            steps {
+                sh 'docker compose -f docker-compose.production.yml build lms-books-prod'
+            }
         }
+        // ...restante dos stages...
     }
 
     post {
@@ -64,20 +70,7 @@ pipeline {
             }
         }
     }
-            when {
-                branch 'staging'
-            }
-            steps {
-                sh 'docker compose -f docker-compose.staging.yml build lms-books-staging'
-            }
-        }
-
-        stage('Build Docker Image (Production)') {
-            when {
-                branch 'production'
-            }
-            steps {
-                sh 'docker compose -f docker-compose.production.yml build lms-books-prod'
+}
             }
         }
 
