@@ -1,0 +1,98 @@
+# =============================================================================
+# Docker Compose for LMS Books Microservice
+# =============================================================================
+# USAGE OPTIONS:
+#   1. Standalone (with own RabbitMQ):
+#      docker compose up -d
+#
+#   2. With Monolith's RabbitMQ (recommended for integration):
+#      First start monolith: cd ../MEI-ARCSOFT-2025-2026-1191577-1250530-PART-2 && docker compose up -d
+#      Then start books:     docker compose up -d postgres_books lms-books
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # PostgreSQL Database for Books Microservice
+  # ---------------------------------------------------------------------------
+  postgres_books:
+    container_name: postgres_books
+    image: postgres:17
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: booksdb
+    volumes:
+      - postgres_books_volume:/var/lib/postgresql/data
+    networks:
+      - lms_network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+
+  # ---------------------------------------------------------------------------
+  # RabbitMQ (Optional - use only if running standalone)
+  # Comment out this service if using shared RabbitMQ from monolith
+  # ---------------------------------------------------------------------------
+  # rabbitmq:
+  #   container_name: rabbitmq_lms
+  #   image: rabbitmq:3-management
+  #   restart: unless-stopped
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: guest
+  #     RABBITMQ_DEFAULT_PASS: guest
+  #   networks:
+  #     - lms_network
+  #   healthcheck:
+  #     test: ["CMD", "rabbitmqctl", "status"]
+  #     interval: 10s
+  #     retries: 5
+  #     timeout: 5s
+  #   profiles:
+  #     - standalone
+
+  # ---------------------------------------------------------------------------
+  # LMS Books Microservice
+  # ---------------------------------------------------------------------------
+  lms-books:
+    container_name: lms_books
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8090:8090"
+    environment:
+      - SPRING_PROFILES_ACTIVE=postgres,bootstrap
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_books:5432/booksdb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_RABBITMQ_HOST=rabbitmq_lms
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+      - SPRING_RABBITMQ_ADDRESSES=amqp://guest:guest@rabbitmq_lms:5672
+      - SERVER_PORT=8090
+    depends_on:
+      postgres_books:
+        condition: service_healthy
+    networks:
+      - lms_network
+
+# -----------------------------------------------------------------------------
+# Networks - Uses external network from monolith
+# Start monolith first: cd ../MEI-ARCSOFT-2025-2026-1191577-1250530-PART-2 && docker compose up -d
+# -----------------------------------------------------------------------------
+networks:
+  lms_network:
+    name: lms_network
+    external: true
+
+volumes:
+  postgres_books_volume:

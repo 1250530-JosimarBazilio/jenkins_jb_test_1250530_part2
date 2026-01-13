@@ -1,0 +1,1011 @@
+{
+    "info": {
+        "_postman_id": "c1d2e3f4-g5h6-7890-cdef-gh1234567890",
+        "name": "LMS Books - Complete Integration Tests",
+        "description": "Complete integration tests for LMS Books microservice covering Authors, Books, and all CQRS v2 endpoints",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:8081"
+        },
+        {
+            "key": "authorNumber",
+            "value": ""
+        },
+        {
+            "key": "authorVersion",
+            "value": ""
+        },
+        {
+            "key": "secondAuthorNumber",
+            "value": ""
+        },
+        {
+            "key": "isbn",
+            "value": ""
+        },
+        {
+            "key": "bookVersion",
+            "value": ""
+        }
+    ],
+    "item": [
+        {
+            "name": "1. Health Check",
+            "item": [
+                {
+                    "name": "Books API Health",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('API is healthy', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "    pm.expect(pm.response.text()).to.include('healthy');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/books/health",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "books",
+                                "health"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "2. Author CRUD Flow",
+            "item": [
+                {
+                    "name": "2.1 Create First Author",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Author created successfully', function() {",
+                                    "    pm.response.to.have.status(201);",
+                                    "});",
+                                    "",
+                                    "var jsonData = pm.response.json();",
+                                    "pm.collectionVariables.set('authorNumber', jsonData.authorNumber);",
+                                    "",
+                                    "pm.test('ETag present', function() {",
+                                    "    pm.response.to.have.header('ETag');",
+                                    "    pm.collectionVariables.set('authorVersion', pm.response.headers.get('ETag'));",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Integration Test Author\",\n    \"bio\": \"Author created for integration testing - specializes in software architecture patterns.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "2.2 Get Author by Number",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Author retrieved', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Has required fields', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.authorNumber).to.eql(pm.collectionVariables.get('authorNumber'));",
+                                    "    pm.expect(jsonData.name).to.eql('Integration Test Author');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors/{{authorNumber}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors",
+                                "{{authorNumber}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "2.3 Search Author by Name",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Search successful', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Found matching author', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.items).to.be.an('array');",
+                                    "    pm.expect(jsonData.items.length).to.be.greaterThan(0);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors?name=Integration",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors"
+                            ],
+                            "query": [
+                                {
+                                    "key": "name",
+                                    "value": "Integration"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "2.4 Update Author",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Author updated', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Bio updated', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.bio).to.include('Updated');",
+                                    "});",
+                                    "",
+                                    "pm.test('New ETag returned', function() {",
+                                    "    pm.response.to.have.header('ETag');",
+                                    "    pm.collectionVariables.set('authorVersion', pm.response.headers.get('ETag'));",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "If-Match",
+                                "value": "{{authorVersion}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"bio\": \"Updated bio - Expert in CQRS, Event Sourcing, and Domain-Driven Design patterns.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors/{{authorNumber}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors",
+                                "{{authorNumber}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "2.5 Create Second Author (for co-authorship)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Second author created', function() {",
+                                    "    pm.response.to.have.status(201);",
+                                    "});",
+                                    "",
+                                    "var jsonData = pm.response.json();",
+                                    "pm.collectionVariables.set('secondAuthorNumber', jsonData.authorNumber);"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Second Integration Author\",\n    \"bio\": \"Co-author for testing multi-author books and co-author queries.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "3. Book CRUD Flow",
+            "item": [
+                {
+                    "name": "3.1 Create Book with Single Author",
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": [
+                                    "var prefix = '978';",
+                                    "var random = '';",
+                                    "for (var i = 0; i < 9; i++) {",
+                                    "    random += Math.floor(Math.random() * 10);",
+                                    "}",
+                                    "var isbn12 = prefix + random;",
+                                    "var sum = 0;",
+                                    "for (var i = 0; i < 12; i++) {",
+                                    "    sum += parseInt(isbn12[i]) * (i % 2 === 0 ? 1 : 3);",
+                                    "}",
+                                    "var checkDigit = (10 - (sum % 10)) % 10;",
+                                    "pm.collectionVariables.set('isbn', isbn12 + checkDigit);"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Book created', function() {",
+                                    "    pm.response.to.have.status(201);",
+                                    "});",
+                                    "",
+                                    "var jsonData = pm.response.json();",
+                                    "pm.test('ISBN matches', function() {",
+                                    "    pm.expect(jsonData.isbn).to.eql(pm.collectionVariables.get('isbn'));",
+                                    "});",
+                                    "",
+                                    "pm.test('ETag present', function() {",
+                                    "    pm.response.to.have.header('ETag');",
+                                    "    pm.collectionVariables.set('bookVersion', pm.response.headers.get('ETag'));",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"Domain-Driven Design in Practice\",\n    \"description\": \"A comprehensive guide to implementing DDD patterns in modern software systems.\",\n    \"genre\": \"Technical\",\n    \"authors\": [\"{{authorNumber}}\"]\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/books/{{isbn}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "books",
+                                "{{isbn}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "3.2 Get Book by ISBN",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Book retrieved', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Has required fields', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.isbn).to.exist;",
+                                    "    pm.expect(jsonData.title).to.exist;",
+                                    "    pm.expect(jsonData.description).to.exist;",
+                                    "    pm.expect(jsonData._links).to.exist;",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/books/{{isbn}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "books",
+                                "{{isbn}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "3.3 Search Books by Title",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Search successful', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Found matching book', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.items).to.be.an('array');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/books?title=Domain",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "books"
+                            ],
+                            "query": [
+                                {
+                                    "key": "title",
+                                    "value": "Domain"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "3.4 Update Book",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Book updated', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Description updated', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.description).to.include('UPDATED');",
+                                    "});",
+                                    "",
+                                    "pm.test('New ETag returned', function() {",
+                                    "    pm.response.to.have.header('ETag');",
+                                    "    pm.collectionVariables.set('bookVersion', pm.response.headers.get('ETag'));",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "If-Match",
+                                "value": "{{bookVersion}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"description\": \"UPDATED - A comprehensive and updated guide to implementing DDD, CQRS, and Event Sourcing patterns.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/books/{{isbn}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "books",
+                                "{{isbn}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "4. Author-Book Relationships",
+            "item": [
+                {
+                    "name": "4.1 Get Books by Author",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Request successful', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Has books array', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.items).to.be.an('array');",
+                                    "    pm.expect(jsonData.items.length).to.be.greaterThan(0);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/authors/{{authorNumber}}/books",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "authors",
+                                "{{authorNumber}}",
+                                "books"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "4.2 Get Co-Authors",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Request successful', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors/{{authorNumber}}/coauthors",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors",
+                                "{{authorNumber}}",
+                                "coauthors"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "4.3 Get Top 5 Authors",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Request completed', function() {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors/top5",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors",
+                                "top5"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "5. Optimistic Locking Tests",
+            "item": [
+                {
+                    "name": "5.1 Update Author - Stale Version",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Conflict or error on stale version', function() {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([409, 500]);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "If-Match",
+                                "value": "0"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"bio\": \"This should fail with stale version\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors/{{authorNumber}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors",
+                                "{{authorNumber}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "5.2 Update Book - Stale Version",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Conflict or error on stale version', function() {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([409, 500]);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "If-Match",
+                                "value": "0"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"description\": \"This should fail with stale version\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/books/{{isbn}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "books",
+                                "{{isbn}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "6. Error Handling Tests",
+            "item": [
+                {
+                    "name": "6.1 Get Non-Existent Author",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Returns 404', function() {",
+                                    "    pm.response.to.have.status(404);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors/999999",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors",
+                                "999999"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "6.2 Get Non-Existent Book",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Returns 404', function() {",
+                                    "    pm.response.to.have.status(404);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/books/9789999999999",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "books",
+                                "9789999999999"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "6.3 Create Author - Empty Name",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Validation error', function() {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([400, 409, 500]);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"\",\n    \"bio\": \"This should fail\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "6.4 Create Book - Invalid ISBN",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Validation error', function() {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([400, 409, 500]);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"Invalid ISBN Book\",\n    \"description\": \"Test\",\n    \"genre\": \"Fiction\",\n    \"authors\": [\"{{authorNumber}}\"]\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/books/INVALID-ISBN",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "books",
+                                "INVALID-ISBN"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "6.5 Missing If-Match Header",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Bad request', function() {",
+                                    "    pm.response.to.have.status(400);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"bio\": \"Should fail\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors/{{authorNumber}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors",
+                                "{{authorNumber}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "7. v1 vs v2 API Comparison",
+            "item": [
+                {
+                    "name": "7.1 Get Author v1",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('v1 API works', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.globals.set('v1AuthorResponse', pm.response.json());"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/authors/{{authorNumber}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "authors",
+                                "{{authorNumber}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "7.2 Get Author v2 (CQRS)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('v2 API works', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('v1 and v2 return consistent data', function() {",
+                                    "    var v2Data = pm.response.json();",
+                                    "    var v1Data = pm.globals.get('v1AuthorResponse');",
+                                    "    pm.expect(v2Data.authorNumber).to.eql(v1Data.authorNumber);",
+                                    "    pm.expect(v2Data.name).to.eql(v1Data.name);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors/{{authorNumber}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors",
+                                "{{authorNumber}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,794 @@
+{
+    "info": {
+        "_postman_id": "b1c2d3e4-f5g6-7890-bcde-fg1234567890",
+        "name": "Book CQRS Tests",
+        "description": "Tests for Book Management with CQRS pattern (v2 endpoints)",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:8081"
+        },
+        {
+            "key": "isbn",
+            "value": ""
+        },
+        {
+            "key": "bookVersion",
+            "value": ""
+        },
+        {
+            "key": "authorNumber",
+            "value": ""
+        },
+        {
+            "key": "genreId",
+            "value": ""
+        }
+    ],
+    "item": [
+        {
+            "name": "Setup",
+            "item": [
+                {
+                    "name": "Create Author for Book Tests",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Author created for book tests', function() {",
+                                    "    pm.response.to.have.status(201);",
+                                    "});",
+                                    "",
+                                    "pm.test('Save authorNumber', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.collectionVariables.set('authorNumber', jsonData.authorNumber);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Book Test Author\",\n    \"bio\": \"Author created for book testing purposes.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/authors",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "authors"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "v1 - Legacy Endpoints",
+            "item": [
+                {
+                    "name": "Create Book (v1)",
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": [
+                                    "// Generate a random ISBN-13",
+                                    "var prefix = '978';",
+                                    "var random = '';",
+                                    "for (var i = 0; i < 9; i++) {",
+                                    "    random += Math.floor(Math.random() * 10);",
+                                    "}",
+                                    "var isbn12 = prefix + random;",
+                                    "",
+                                    "// Calculate check digit",
+                                    "var sum = 0;",
+                                    "for (var i = 0; i < 12; i++) {",
+                                    "    sum += parseInt(isbn12[i]) * (i % 2 === 0 ? 1 : 3);",
+                                    "}",
+                                    "var checkDigit = (10 - (sum % 10)) % 10;",
+                                    "",
+                                    "pm.collectionVariables.set('isbn', isbn12 + checkDigit);"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Book created successfully', function() {",
+                                    "    pm.response.to.have.status(201);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has ISBN', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.isbn).to.exist;",
+                                    "});",
+                                    "",
+                                    "pm.test('ETag header present', function() {",
+                                    "    pm.response.to.have.header('ETag');",
+                                    "    var etag = pm.response.headers.get('ETag');",
+                                    "    pm.collectionVariables.set('bookVersion', etag);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"Test Book v1\",\n    \"description\": \"This is a test book created via v1 API endpoint.\",\n    \"genre\": \"Fiction\",\n    \"authors\": [\"{{authorNumber}}\"]\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/books/{{isbn}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "books",
+                                "{{isbn}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Book by ISBN (v1)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Book retrieved successfully', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has required fields', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.isbn).to.exist;",
+                                    "    pm.expect(jsonData.title).to.exist;",
+                                    "    pm.expect(jsonData.description).to.exist;",
+                                    "    pm.expect(jsonData._links).to.exist;",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/books/{{isbn}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "books",
+                                "{{isbn}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Search Books (v1)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Search successful', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has items', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.items).to.be.an('array');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/books?title=Test",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "books"
+                            ],
+                            "query": [
+                                {
+                                    "key": "title",
+                                    "value": "Test"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Book (v1)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Book updated successfully', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Description was updated', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.description).to.include('Updated');",
+                                    "});",
+                                    "",
+                                    "pm.test('New ETag returned', function() {",
+                                    "    pm.response.to.have.header('ETag');",
+                                    "    var etag = pm.response.headers.get('ETag');",
+                                    "    pm.collectionVariables.set('bookVersion', etag);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "If-Match",
+                                "value": "{{bookVersion}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"description\": \"Updated description via v1 API endpoint.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/books/{{isbn}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "books",
+                                "{{isbn}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Health Check (v1)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Health check passed', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response is \"healthy\"', function() {",
+                                    "    pm.expect(pm.response.text()).to.include('healthy');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/books/health",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "books",
+                                "health"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "v2 - CQRS Endpoints",
+            "item": [
+                {
+                    "name": "Create Book (v2 CQRS)",
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": [
+                                    "// Generate a random ISBN-13",
+                                    "var prefix = '978';",
+                                    "var random = '';",
+                                    "for (var i = 0; i < 9; i++) {",
+                                    "    random += Math.floor(Math.random() * 10);",
+                                    "}",
+                                    "var isbn12 = prefix + random;",
+                                    "",
+                                    "// Calculate check digit",
+                                    "var sum = 0;",
+                                    "for (var i = 0; i < 12; i++) {",
+                                    "    sum += parseInt(isbn12[i]) * (i % 2 === 0 ? 1 : 3);",
+                                    "}",
+                                    "var checkDigit = (10 - (sum % 10)) % 10;",
+                                    "",
+                                    "pm.collectionVariables.set('isbn', isbn12 + checkDigit);"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Book created successfully via CQRS', function() {",
+                                    "    pm.response.to.have.status(201);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has ISBN', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.isbn).to.exist;",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has HATEOAS links', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData._links).to.exist;",
+                                    "});",
+                                    "",
+                                    "pm.test('ETag header present', function() {",
+                                    "    pm.response.to.have.header('ETag');",
+                                    "    var etag = pm.response.headers.get('ETag');",
+                                    "    pm.collectionVariables.set('bookVersion', etag);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"CQRS Test Book\",\n    \"description\": \"This book was created using the CQRS v2 endpoint with Command Bus pattern.\",\n    \"genre\": \"Science Fiction\",\n    \"authors\": [\"{{authorNumber}}\"]\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/books/{{isbn}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "books",
+                                "{{isbn}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Book by ISBN (v2 CQRS)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Book retrieved successfully via Query Bus', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has required fields', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.isbn).to.exist;",
+                                    "    pm.expect(jsonData.title).to.exist;",
+                                    "    pm.expect(jsonData.description).to.exist;",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has HATEOAS links', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData._links).to.exist;",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/books/{{isbn}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "books",
+                                "{{isbn}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Search Books (v2 CQRS)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Search successful via Query Bus', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has items array', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.items).to.be.an('array');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/books?title=CQRS",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "books"
+                            ],
+                            "query": [
+                                {
+                                    "key": "title",
+                                    "value": "CQRS"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Book (v2 CQRS)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Book updated successfully via Command Bus', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Description was updated', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.description).to.include('Updated');",
+                                    "});",
+                                    "",
+                                    "pm.test('New ETag returned', function() {",
+                                    "    pm.response.to.have.header('ETag');",
+                                    "    var etag = pm.response.headers.get('ETag');",
+                                    "    pm.collectionVariables.set('bookVersion', etag);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "If-Match",
+                                "value": "{{bookVersion}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"Updated CQRS Book\",\n    \"description\": \"Updated description via CQRS v2 API endpoint using Command Bus pattern.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/books/{{isbn}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "books",
+                                "{{isbn}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Health Check (v2 CQRS)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Health check passed', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response is \"healthy\"', function() {",
+                                    "    pm.expect(pm.response.text()).to.include('healthy');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/books/health",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "books",
+                                "health"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Error Scenarios",
+            "item": [
+                {
+                    "name": "Get Non-Existent Book",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Returns 404 for non-existent book', function() {",
+                                    "    pm.response.to.have.status(404);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/books/9789999999999",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "books",
+                                "9789999999999"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Without If-Match Header",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Returns 400 for missing If-Match', function() {",
+                                    "    pm.response.to.have.status(400);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"description\": \"This should fail\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/books/{{isbn}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "books",
+                                "{{isbn}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Book With Invalid ISBN",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Returns validation error for invalid ISBN', function() {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([400, 409, 500]);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"Invalid ISBN Book\",\n    \"description\": \"This should fail due to invalid ISBN.\",\n    \"genre\": \"Fiction\",\n    \"authors\": [\"{{authorNumber}}\"]\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/books/123",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "books",
+                                "123"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Book Without Authors",
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": [
+                                    "// Generate a random ISBN-13",
+                                    "var prefix = '978';",
+                                    "var random = '';",
+                                    "for (var i = 0; i < 9; i++) {",
+                                    "    random += Math.floor(Math.random() * 10);",
+                                    "}",
+                                    "var isbn12 = prefix + random;",
+                                    "",
+                                    "// Calculate check digit",
+                                    "var sum = 0;",
+                                    "for (var i = 0; i < 12; i++) {",
+                                    "    sum += parseInt(isbn12[i]) * (i % 2 === 0 ? 1 : 3);",
+                                    "}",
+                                    "var checkDigit = (10 - (sum % 10)) % 10;",
+                                    "",
+                                    "pm.variables.set('tempIsbn', isbn12 + checkDigit);"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Returns validation error for missing authors', function() {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([400, 409, 500]);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"Book Without Authors\",\n    \"description\": \"This should fail due to missing authors.\",\n    \"genre\": \"Fiction\",\n    \"authors\": []\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/books/{{tempIsbn}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "books",
+                                "{{tempIsbn}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}

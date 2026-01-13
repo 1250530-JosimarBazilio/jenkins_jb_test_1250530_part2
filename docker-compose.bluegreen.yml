@@ -1,0 +1,216 @@
+# Docker Compose para Blue/Green Deployment Strategy
+# Este ficheiro define dois ambientes idênticos (blue e green)
+# O tráfego é direcionado através do Traefik como reverse proxy
+
+services:
+  # ===========================================
+  # INFRAESTRUTURA PARTILHADA
+  # ===========================================
+  
+  postgres_books_prod:
+    container_name: postgres_books_prod
+    image: postgres:17
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password_prod}
+      POSTGRES_DB: booksdb_prod
+    volumes:
+      - postgres_books_prod_volume:/var/lib/postgresql/data
+    networks:
+      - lms_bluegreen_network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+
+  rabbitmq_prod:
+    container_name: rabbitmq_lms_prod
+    image: rabbitmq:3-management
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+    networks:
+      - lms_bluegreen_network
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+
+  # ===========================================
+  # TRAEFIK - REVERSE PROXY / LOAD BALANCER
+  # ===========================================
+  
+  traefik:
+    container_name: traefik_bluegreen
+    image: traefik:v3.0
+    restart: unless-stopped
+    command:
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file.directory=/etc/traefik/dynamic"
+      - "--providers.file.watch=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--log.level=INFO"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"  # Dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/dynamic:/etc/traefik/dynamic
+    networks:
+      - lms_bluegreen_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.localhost`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+
+  # ===========================================
+  # AMBIENTE BLUE
+  # ===========================================
+  # Labels de Release:
+  # - deployment.slot: blue
+  # - deployment.release-strategy: blue-green
+  # - deployment.rollback-enabled: true
+  
+  lms-books-blue:
+    container_name: lms_books_blue
+    image: ${DOCKER_REGISTRY:-}lms-books:${BLUE_VERSION:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      labels:
+        - "deployment.slot=blue"
+        - "deployment.version=${BLUE_VERSION:-v1.0.0}"
+        - "deployment.release-strategy=blue-green"
+        - "deployment.rollback-enabled=true"
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=postgres,production,blue
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_books_prod:5432/booksdb_prod
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-password_prod}
+      - SPRING_RABBITMQ_HOST=rabbitmq_prod
+      - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USER:-guest}
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PASS:-guest}
+      - SERVER_PORT=8090
+      - DEPLOYMENT_SLOT=blue
+      - DEPLOYMENT_BLUE_VERSION=${BLUE_VERSION:-v1.0.0}
+    depends_on:
+      postgres_books_prod:
+        condition: service_healthy
+      rabbitmq_prod:
+        condition: service_healthy
+    ports:
+      - "8090:8090"
+    networks:
+      - lms_bluegreen_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    labels:
+      - "traefik.enable=true"
+      # Release Management Labels
+      - "deployment.slot=blue"
+      - "deployment.version=${BLUE_VERSION:-v1.0.0}"
+      - "deployment.release-strategy=blue-green"
+      - "deployment.rollback-enabled=true"
+      - "deployment.rollback-target=green"
+      # Rota principal (controlada dinamicamente)
+      - "traefik.http.routers.lms-books-blue.rule=Host(`lms-books.localhost`)"
+      - "traefik.http.routers.lms-books-blue.entrypoints=web"
+      - "traefik.http.routers.lms-books-blue.priority=1"
+      - "traefik.http.services.lms-books-blue.loadbalancer.server.port=8090"
+      # Rota direta para blue (para testes)
+      - "traefik.http.routers.lms-books-blue-direct.rule=Host(`blue.lms-books.localhost`)"
+      - "traefik.http.routers.lms-books-blue-direct.entrypoints=web"
+      - "traefik.http.routers.lms-books-blue-direct.service=lms-books-blue"
+
+  # ===========================================
+  # AMBIENTE GREEN
+  # ===========================================
+  # Labels de Release:
+  # - deployment.slot: green
+  # - deployment.release-strategy: blue-green
+  # - deployment.rollback-enabled: true
+  # - deployment.simulate-error: configurable via environment
+  
+  lms-books-green:
+    container_name: lms_books_green
+    image: ${DOCKER_REGISTRY:-}lms-books:${GREEN_VERSION:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      labels:
+        - "deployment.slot=green"
+        - "deployment.version=${GREEN_VERSION:-v2.0.0}"
+        - "deployment.release-strategy=blue-green"
+        - "deployment.rollback-enabled=true"
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=postgres,production,green${SIMULATE_ERROR:+,-error}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_books_prod:5432/booksdb_prod
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-password_prod}
+      - SPRING_RABBITMQ_HOST=rabbitmq_prod
+      - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USER:-guest}
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PASS:-guest}
+      - SERVER_PORT=8091
+      - DEPLOYMENT_SLOT=green
+      - DEPLOYMENT_GREEN_VERSION=${GREEN_VERSION:-v2.0.0}
+      - DEPLOYMENT_GREEN_SIMULATE_ERROR=${SIMULATE_ERROR:-false}
+    depends_on:
+      postgres_books_prod:
+        condition: service_healthy
+      rabbitmq_prod:
+        condition: service_healthy
+    ports:
+      - "8091:8091"
+    networks:
+      - lms_bluegreen_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8091/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    labels:
+      - "traefik.enable=true"
+      # Release Management Labels
+      - "deployment.slot=green"
+      - "deployment.version=${GREEN_VERSION:-v2.0.0}"
+      - "deployment.release-strategy=blue-green"
+      - "deployment.rollback-enabled=true"
+      - "deployment.rollback-target=blue"
+      - "deployment.simulate-error=${SIMULATE_ERROR:-false}"
+      # Rota principal (controlada dinamicamente)
+      - "traefik.http.routers.lms-books-green.rule=Host(`lms-books.localhost`)"
+      - "traefik.http.routers.lms-books-green.entrypoints=web"
+      - "traefik.http.routers.lms-books-green.priority=0"
+      - "traefik.http.services.lms-books-green.loadbalancer.server.port=8091"
+      # Rota direta para green (para testes)
+      - "traefik.http.routers.lms-books-green-direct.rule=Host(`green.lms-books.localhost`)"
+      - "traefik.http.routers.lms-books-green-direct.entrypoints=web"
+      - "traefik.http.routers.lms-books-green-direct.service=lms-books-green"
+
+networks:
+  lms_bluegreen_network:
+    name: lms_bluegreen_network
+
+volumes:
+  postgres_books_prod_volume:

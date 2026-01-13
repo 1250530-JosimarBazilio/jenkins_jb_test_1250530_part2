@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+
+
+<h1>Isbn.java</h1>
+
+<table class="src">
+
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_1'/>
+1
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_1'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>package pt.psoft.g1.psoftg1.bookmanagement.model;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_2'/>
+2
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_2'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_3'/>
+3
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_3'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import jakarta.persistence.Column;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_4'/>
+4
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_4'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import jakarta.persistence.Embeddable;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_5'/>
+5
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_5'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import jakarta.validation.constraints.Size;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_6'/>
+6
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_6'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import lombok.EqualsAndHashCode;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_7'/>
+7
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_7'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_8'/>
+8
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_8'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.io.Serializable;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_9'/>
+9
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_9'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_10'/>
+10
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_10'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_11'/>
+11
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_11'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>@Embeddable</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_12'/>
+12
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_12'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>@EqualsAndHashCode</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_13'/>
+13
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_13'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>public class Isbn implements Serializable {</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_14'/>
+14
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_14'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    @Size(min = 10, max = 13)</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_15'/>
+15
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_15'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    @Column(name=&#34;ISBN&#34;, length = 16)</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_16'/>
+16
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_16'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_17'/>
+17
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_17'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    String isbn;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_18'/>
+18
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_18'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_19'/>
+19
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_19'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    public Isbn(String isbn) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_20'/>
+20
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_20'>1</a>
+<span>
+
+1. &#60;init&#62; : removed conditional - replaced equality check with false &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        if (isValidIsbn(isbn)) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_21'/>
+21
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_21'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>            this.isbn = isbn;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_22'/>
+22
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_22'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>        } else {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_23'/>
+23
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_23'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>            throw new IllegalArgumentException(&#34;Invalid ISBN-13 format or check digit.&#34;);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_24'/>
+24
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_24'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>        }</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_25'/>
+25
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_25'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    }</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_26'/>
+26
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_26'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_27'/>
+27
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_27'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class=''>    protected Isbn() {};</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_28'/>
+28
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_28'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_29'/>
+29
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_29'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    private static boolean isValidIsbn(String isbn) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_30'/>
+30
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_30'>1</a>
+<span>
+
+1. isValidIsbn : removed conditional - replaced equality check with false &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        if(isbn == null)</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_31'/>
+31
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_31'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>            throw new IllegalArgumentException(&#34;Isbn cannot be null&#34;);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_32'/>
+32
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_32'>3</a>
+<span>
+
+1. isValidIsbn : removed conditional - replaced equality check with false &rarr; KILLED<br/>
+
+2. isValidIsbn : replaced boolean return with false for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::isValidIsbn &rarr; KILLED<br/>
+
+3. isValidIsbn : replaced boolean return with true for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::isValidIsbn &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        return (isbn.length() == 10) ? isValidIsbn10(isbn) : isValidIsbn13(isbn);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_33'/>
+33
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_33'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    }</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_34'/>
+34
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_34'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_35'/>
+35
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_35'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    private static boolean isValidIsbn10(String isbn) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_36'/>
+36
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_36'>1</a>
+<span>
+
+1. isValidIsbn10 : removed conditional - replaced equality check with false &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        if (!isbn.matches(&#34;\\d{9}[\\dX]&#34;)) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_37'/>
+37
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_37'>1</a>
+<span>
+
+1. isValidIsbn10 : replaced boolean return with true for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::isValidIsbn10 &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>            return false;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_38'/>
+38
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_38'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>        }</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_39'/>
+39
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_39'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_40'/>
+40
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_40'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>        int sum = 0;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_41'/>
+41
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_41'>2</a>
+<span>
+
+1. isValidIsbn10 : changed conditional boundary &rarr; KILLED<br/>
+
+2. isValidIsbn10 : removed conditional - replaced comparison check with false &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        for (int i = 0; i &#60; 9; i++) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_42'/>
+42
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_42'>4</a>
+<span>
+
+1. isValidIsbn10 : Replaced integer addition with subtraction &rarr; KILLED<br/>
+
+2. isValidIsbn10 : Replaced integer subtraction with addition &rarr; KILLED<br/>
+
+3. isValidIsbn10 : Replaced integer subtraction with addition &rarr; KILLED<br/>
+
+4. isValidIsbn10 : Replaced integer multiplication with division &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>            sum += (isbn.charAt(i) - &#39;0&#39;) * (10 - i);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_43'/>
+43
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_43'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>        }</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_44'/>
+44
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_44'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_45'/>
+45
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_45'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>        char lastChar = isbn.charAt(9);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_46'/>
+46
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_46'>2</a>
+<span>
+
+1. isValidIsbn10 : Replaced integer subtraction with addition &rarr; KILLED<br/>
+
+2. isValidIsbn10 : removed conditional - replaced equality check with false &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        int lastDigit = (lastChar == &#39;X&#39;) ? 10 : lastChar - &#39;0&#39;;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_47'/>
+47
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_47'>1</a>
+<span>
+
+1. isValidIsbn10 : Replaced integer addition with subtraction &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        sum += lastDigit;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_48'/>
+48
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_48'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_49'/>
+49
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_49'>4</a>
+<span>
+
+1. isValidIsbn10 : Replaced integer modulus with multiplication &rarr; KILLED<br/>
+
+2. isValidIsbn10 : removed conditional - replaced equality check with false &rarr; KILLED<br/>
+
+3. isValidIsbn10 : replaced boolean return with true for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::isValidIsbn10 &rarr; KILLED<br/>
+
+4. isValidIsbn10 : replaced boolean return with false for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::isValidIsbn10 &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        return sum % 11 == 0;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_50'/>
+50
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_50'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    }</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_51'/>
+51
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_51'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_52'/>
+52
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_52'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    private static boolean isValidIsbn13(String isbn) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_53'/>
+53
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_53'>2</a>
+<span>
+
+1. isValidIsbn13 : removed conditional - replaced equality check with false &rarr; KILLED<br/>
+
+2. isValidIsbn13 : removed conditional - replaced equality check with false &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        if (isbn == null || !isbn.matches(&#34;\\d{13}&#34;)) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_54'/>
+54
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_54'>1</a>
+<span>
+
+1. isValidIsbn13 : replaced boolean return with true for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::isValidIsbn13 &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>            return false;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_55'/>
+55
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_55'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>        }</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_56'/>
+56
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_56'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_57'/>
+57
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_57'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>        int sum = 0;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_58'/>
+58
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_58'>2</a>
+<span>
+
+1. isValidIsbn13 : removed conditional - replaced comparison check with false &rarr; KILLED<br/>
+
+2. isValidIsbn13 : changed conditional boundary &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        for (int i = 0; i &#60; 12; i++) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_59'/>
+59
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_59'>1</a>
+<span>
+
+1. isValidIsbn13 : Replaced integer addition with subtraction &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>            int digit = Integer.parseInt(isbn.substring(i, i + 1));</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_60'/>
+60
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_60'>4</a>
+<span>
+
+1. isValidIsbn13 : Replaced integer multiplication with division &rarr; KILLED<br/>
+
+2. isValidIsbn13 : Replaced integer modulus with multiplication &rarr; KILLED<br/>
+
+3. isValidIsbn13 : removed conditional - replaced equality check with false &rarr; KILLED<br/>
+
+4. isValidIsbn13 : Replaced integer addition with subtraction &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>            sum += (i % 2 == 0) ? digit : digit * 3;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_61'/>
+61
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_61'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>        }</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_62'/>
+62
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_62'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_63'/>
+63
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_63'>2</a>
+<span>
+
+1. isValidIsbn13 : Replaced integer modulus with multiplication &rarr; KILLED<br/>
+
+2. isValidIsbn13 : Replaced integer subtraction with addition &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        int checksum = 10 - (sum % 10);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_64'/>
+64
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_64'>1</a>
+<span>
+
+1. isValidIsbn13 : removed conditional - replaced equality check with false &rarr; SURVIVED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>        if (checksum == 10) {</span></pre></td></tr>
+
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_65'/>
+65
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_65'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class=''>            checksum = 0;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_66'/>
+66
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_66'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>        }</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_67'/>
+67
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_67'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_68'/>
+68
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_68'>3</a>
+<span>
+
+1. isValidIsbn13 : removed conditional - replaced equality check with false &rarr; KILLED<br/>
+
+2. isValidIsbn13 : replaced boolean return with true for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::isValidIsbn13 &rarr; KILLED<br/>
+
+3. isValidIsbn13 : replaced boolean return with false for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::isValidIsbn13 &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        return checksum == Integer.parseInt(isbn.substring(12));</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_69'/>
+69
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_69'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    }</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_70'/>
+70
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_70'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_71'/>
+71
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_71'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    public String toString() {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_72'/>
+72
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_72'>1</a>
+<span>
+
+1. toString : replaced return value with &#34;&#34; for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::toString &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        return this.isbn;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_73'/>
+73
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_73'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    }</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@718ad3a6_74'/>
+74
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_74'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>}</span></pre></td></tr>
+
+
+
+<tr><td></td><td></td><td><h2>Mutations</h2></td></tr>
+
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_20'>20</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_20'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>&#60;init&#62;<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[method:shouldCreateValidIsbn13()]</span></span> removed conditional - replaced equality check with false &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_30'>30</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_30'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isValidIsbn<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:InvalidIsbnFormatTests]/[method:shouldThrowExceptionWhenIsbnIsNull()]</span></span> removed conditional - replaced equality check with false &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_32'>32</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_32'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isValidIsbn<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[method:shouldCreateValidIsbn10()]</span></span> removed conditional - replaced equality check with false &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>isValidIsbn<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[method:shouldCreateValidIsbn13()]</span></span> replaced boolean return with false for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::isValidIsbn &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>isValidIsbn<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:InvalidIsbnFormatTests]/[method:shouldThrowExceptionForIsbnWithLettersInWrongPosition()]</span></span> replaced boolean return with true for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::isValidIsbn &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_36'>36</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_36'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isValidIsbn10<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:InvalidIsbnFormatTests]/[test-template:shouldThrowExceptionForInvalidIsbnFormats(java.lang.String)]/[test-template-invocation:#6]</span></span> removed conditional - replaced equality check with false &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_37'>37</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_37'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isValidIsbn10<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:InvalidIsbnFormatTests]/[test-template:shouldThrowExceptionForInvalidIsbnFormats(java.lang.String)]/[test-template-invocation:#6]</span></span> replaced boolean return with true for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::isValidIsbn10 &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_41'>41</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_41'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isValidIsbn10<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[method:shouldCreateValidIsbn10()]</span></span> changed conditional boundary &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>isValidIsbn10<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[method:shouldCreateValidIsbn10()]</span></span> removed conditional - replaced comparison check with false &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_42'>42</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_42'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isValidIsbn10<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[method:shouldCreateValidIsbn10()]</span></span> Replaced integer addition with subtraction &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>isValidIsbn10<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[method:shouldCreateValidIsbn10()]</span></span> Replaced integer subtraction with addition &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>isValidIsbn10<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[method:shouldCreateValidIsbn10()]</span></span> Replaced integer subtraction with addition &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>isValidIsbn10<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[method:shouldCreateValidIsbn10()]</span></span> Replaced integer multiplication with division &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_46'>46</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_46'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isValidIsbn10<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[method:shouldCreateValidIsbn10()]</span></span> Replaced integer subtraction with addition &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>isValidIsbn10<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[method:shouldCreateValidIsbn10WithXCheckDigit()]</span></span> removed conditional - replaced equality check with false &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_47'>47</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_47'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isValidIsbn10<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[method:shouldCreateValidIsbn10()]</span></span> Replaced integer addition with subtraction &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_49'>49</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_49'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isValidIsbn10<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[method:shouldCreateValidIsbn10()]</span></span> Replaced integer modulus with multiplication &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>isValidIsbn10<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[method:shouldCreateValidIsbn10()]</span></span> removed conditional - replaced equality check with false &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>isValidIsbn10<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[test-template:shouldThrowExceptionForInvalidIsbn10CheckDigit(java.lang.String)]/[test-template-invocation:#2]</span></span> replaced boolean return with true for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::isValidIsbn10 &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>isValidIsbn10<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[method:shouldCreateValidIsbn10()]</span></span> replaced boolean return with false for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::isValidIsbn10 &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_53'>53</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_53'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isValidIsbn13<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:InvalidIsbnFormatTests]/[test-template:shouldThrowExceptionForInvalidIsbnFormats(java.lang.String)]/[test-template-invocation:#7]</span></span> removed conditional - replaced equality check with false &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>isValidIsbn13<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[method:shouldCreateValidIsbn13()]</span></span> removed conditional - replaced equality check with false &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_54'>54</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_54'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isValidIsbn13<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:InvalidIsbnFormatTests]/[method:shouldThrowExceptionForIsbnWithLettersInWrongPosition()]</span></span> replaced boolean return with true for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::isValidIsbn13 &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_58'>58</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_58'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isValidIsbn13<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[method:shouldCreateValidIsbn13()]</span></span> removed conditional - replaced comparison check with false &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>isValidIsbn13<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[method:shouldCreateValidIsbn13()]</span></span> changed conditional boundary &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_59'>59</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_59'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isValidIsbn13<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[method:shouldCreateValidIsbn13()]</span></span> Replaced integer addition with subtraction &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_60'>60</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_60'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isValidIsbn13<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[method:shouldCreateValidIsbn13()]</span></span> Replaced integer multiplication with division &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>isValidIsbn13<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[method:shouldCreateAnotherValidIsbn13()]</span></span> Replaced integer modulus with multiplication &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>isValidIsbn13<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[method:shouldCreateValidIsbn13()]</span></span> removed conditional - replaced equality check with false &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>isValidIsbn13<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[method:shouldCreateValidIsbn13()]</span></span> Replaced integer addition with subtraction &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_63'>63</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_63'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isValidIsbn13<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[method:shouldCreateValidIsbn13()]</span></span> Replaced integer modulus with multiplication &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>isValidIsbn13<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[method:shouldCreateValidIsbn13()]</span></span> Replaced integer subtraction with addition &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_64'>64</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_64'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isValidIsbn13<br/><b>Killed by : </b>none</span></span> removed conditional - replaced equality check with false &rarr; SURVIVED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_68'>68</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_68'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>isValidIsbn13<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[method:shouldCreateValidIsbn13()]</span></span> removed conditional - replaced equality check with false &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>isValidIsbn13<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[test-template:shouldThrowExceptionForInvalidIsbn13CheckDigit(java.lang.String)]/[test-template-invocation:#2]</span></span> replaced boolean return with true for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::isValidIsbn13 &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>isValidIsbn13<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[method:shouldCreateValidIsbn13()]</span></span> replaced boolean return with false for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::isValidIsbn13 &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@718ad3a6_72'>72</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@718ad3a6_72'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>toString<br/><b>Killed by : </b>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[method:shouldCreateValidIsbn10()]</span></span> replaced return value with &#34;&#34; for pt/psoft/g1/psoftg1/bookmanagement/model/Isbn::toString &rarr; KILLED</p> 
+</td>
+</tr>
+
+</table>
+
+
+<h2>Active mutators</h2>
+<ul>
+
+<li class='mutator'>CONDITIONALS_BOUNDARY</li>
+
+<li class='mutator'>EMPTY_RETURNS</li>
+
+<li class='mutator'>FALSE_RETURNS</li>
+
+<li class='mutator'>INCREMENTS</li>
+
+<li class='mutator'>INVERT_NEGS</li>
+
+<li class='mutator'>MATH</li>
+
+<li class='mutator'>NULL_RETURNS</li>
+
+<li class='mutator'>PRIMITIVE_RETURNS</li>
+
+<li class='mutator'>REMOVE_CONDITIONALS_EQUAL_ELSE</li>
+
+<li class='mutator'>REMOVE_CONDITIONALS_ORDER_ELSE</li>
+
+<li class='mutator'>TRUE_RETURNS</li>
+
+<li class='mutator'>VOID_METHOD_CALLS</li>
+
+</ul>
+
+<h2>Tests examined</h2>
+<ul>
+<li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[method:shouldCreateValidIsbn13()] (0 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[method:shouldCreateAnotherValidIsbn13()] (0 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[test-template:shouldThrowExceptionForInvalidIsbn13CheckDigit(java.lang.String)]/[test-template-invocation:#2] (0 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[test-template:shouldThrowExceptionForInvalidIsbn13CheckDigit(java.lang.String)]/[test-template-invocation:#3] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn13Tests]/[test-template:shouldThrowExceptionForInvalidIsbn13CheckDigit(java.lang.String)]/[test-template-invocation:#1] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:IsbnStringRepresentationTests]/[method:shouldReturnCorrectStringRepresentation()] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:IsbnEqualityTests]/[method:shouldCorrectlyCompareTwoEqualIsbns()] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:IsbnEqualityTests]/[method:shouldCorrectlyIdentifyDifferentIsbnsAsNotEqual()] (2 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookCreationTests]/[method:shouldCreateBookWithoutDescription()] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookGettersTests]/[method:shouldReturnCorrectDescription()] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookCreationTests]/[method:shouldCreateBookWithMultipleAuthors()] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookGettersTests]/[method:shouldReturnEmptyStringWhenDescriptionIsNull()] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookGettersTests]/[method:shouldReturnCorrectGenre()] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookCreationTests]/[method:shouldThrowExceptionWhenAuthorsListIsEmpty()] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookCreationTests]/[method:shouldThrowExceptionWhenAuthorsListIsNull()] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookCreationTests]/[method:shouldCreateBookWithValidData()] (0 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookGettersTests]/[method:shouldReturnCorrectTitle()] (2 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookGettersTests]/[method:shouldReturnCorrectIsbn()] (2 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookGettersTests]/[method:shouldReturnCorrectAuthorsList()] (2 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookUpdateTests]/[method:shouldUpdateBookTitleSuccessfully()] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookUpdateTests]/[method:shouldUpdateBookDescriptionSuccessfully()] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookUpdateTests]/[method:shouldUpdateBookGenreSuccessfully()] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookUpdateTests]/[method:shouldThrowStaleObjectStateExceptionOnVersionConflict()] (3 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookUpdateTests]/[method:shouldUpdateBookAuthorsSuccessfully()] (2 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookUpdateTests]/[method:shouldNotChangeFieldsWhenRequestHasNullValues()] (2 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookCreationTests]/[method:shouldThrowExceptionWhenGenreIsNull()] (15 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:InvalidIsbnFormatTests]/[method:shouldThrowExceptionForIsbnWithLettersInWrongPosition()] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:InvalidIsbnFormatTests]/[test-template:shouldThrowExceptionForInvalidIsbnFormats(java.lang.String)]/[test-template-invocation:#7] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:InvalidIsbnFormatTests]/[test-template:shouldThrowExceptionForInvalidIsbnFormats(java.lang.String)]/[test-template-invocation:#5] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:InvalidIsbnFormatTests]/[test-template:shouldThrowExceptionForInvalidIsbnFormats(java.lang.String)]/[test-template-invocation:#3] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:InvalidIsbnFormatTests]/[test-template:shouldThrowExceptionForInvalidIsbnFormats(java.lang.String)]/[test-template-invocation:#4] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:InvalidIsbnFormatTests]/[method:shouldThrowExceptionForIsbnWithSpecialCharacters()] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:InvalidIsbnFormatTests]/[method:shouldThrowExceptionForIsbnWithSpaces()] (2 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:InvalidIsbnFormatTests]/[test-template:shouldThrowExceptionForInvalidIsbnFormats(java.lang.String)]/[test-template-invocation:#2] (3 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:InvalidIsbnFormatTests]/[test-template:shouldThrowExceptionForInvalidIsbnFormats(java.lang.String)]/[test-template-invocation:#1] (54 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookCreationTests]/[method:shouldThrowExceptionWhenIsbnFormatIsInvalid()] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[method:shouldCreateValidIsbn10()] (0 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[method:shouldCreateValidIsbn10WithXCheckDigit()] (0 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[test-template:shouldThrowExceptionForInvalidIsbn10CheckDigit(java.lang.String)]/[test-template-invocation:#2] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[test-template:shouldThrowExceptionForInvalidIsbn10CheckDigit(java.lang.String)]/[test-template-invocation:#3] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:Isbn10Tests]/[test-template:shouldThrowExceptionForInvalidIsbn10CheckDigit(java.lang.String)]/[test-template-invocation:#1] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:InvalidIsbnFormatTests]/[test-template:shouldThrowExceptionForInvalidIsbnFormats(java.lang.String)]/[test-template-invocation:#6] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.IsbnTest]/[nested-class:InvalidIsbnFormatTests]/[method:shouldThrowExceptionWhenIsbnIsNull()] (1 ms)</li><li>pt.psoft.g1.psoftg1.bookmanagement.model.BookTest.[engine:junit-jupiter]/[class:pt.psoft.g1.psoftg1.bookmanagement.model.BookTest]/[nested-class:BookCreationTests]/[method:shouldThrowExceptionWhenIsbnIsNull()] (1 ms)</li>
+</ul>
+
+<br/>
+
+Report generated by <a href='https://pitest.org'>PIT</a> 1.15.3
+
+</body>
+</html>

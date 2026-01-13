@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: pt.psoft.g1.psoftg1.authormanagement.api.AuthorControllerIntegrationTest
+-------------------------------------------------------------------------------
+Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.418 s -- in pt.psoft.g1.psoftg1.authormanagement.api.AuthorControllerIntegrationTest

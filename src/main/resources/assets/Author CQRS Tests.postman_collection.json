@@ -1,0 +1,851 @@
+{
+    "info": {
+        "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "name": "Author CQRS Tests",
+        "description": "Tests for Author Management with CQRS pattern (v2 endpoints)",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:8081"
+        },
+        {
+            "key": "authorNumber",
+            "value": ""
+        },
+        {
+            "key": "authorVersion",
+            "value": ""
+        }
+    ],
+    "item": [
+        {
+            "name": "v1 - Legacy Endpoints",
+            "item": [
+                {
+                    "name": "Create Author (v1)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Author created successfully', function() {",
+                                    "    pm.response.to.have.status(201);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has authorNumber', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.authorNumber).to.exist;",
+                                    "    pm.collectionVariables.set('authorNumber', jsonData.authorNumber);",
+                                    "});",
+                                    "",
+                                    "pm.test('ETag header present', function() {",
+                                    "    pm.response.to.have.header('ETag');",
+                                    "    var etag = pm.response.headers.get('ETag');",
+                                    "    pm.collectionVariables.set('authorVersion', etag);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Test Author v1\",\n    \"bio\": \"This is a test author created via v1 API endpoint for testing purposes.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/authors",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "authors"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Author by Number (v1)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Author retrieved successfully', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has required fields', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.authorNumber).to.exist;",
+                                    "    pm.expect(jsonData.name).to.exist;",
+                                    "    pm.expect(jsonData.bio).to.exist;",
+                                    "    pm.expect(jsonData._links).to.exist;",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/authors/{{authorNumber}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "authors",
+                                "{{authorNumber}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Search Authors by Name (v1)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Search successful', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response is an array', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.items).to.be.an('array');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/authors?name=Test",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "authors"
+                            ],
+                            "query": [
+                                {
+                                    "key": "name",
+                                    "value": "Test"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Author (v1)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Author updated successfully', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Bio was updated', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.bio).to.include('Updated');",
+                                    "});",
+                                    "",
+                                    "pm.test('New ETag returned', function() {",
+                                    "    pm.response.to.have.header('ETag');",
+                                    "    var etag = pm.response.headers.get('ETag');",
+                                    "    pm.collectionVariables.set('authorVersion', etag);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "If-Match",
+                                "value": "{{authorVersion}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"bio\": \"Updated bio via v1 API endpoint.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/authors/{{authorNumber}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "authors",
+                                "{{authorNumber}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Books by Author (v1)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Request successful', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has items array', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.items).to.be.an('array');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/authors/{{authorNumber}}/books",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "authors",
+                                "{{authorNumber}}",
+                                "books"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Top 5 Authors (v1)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Request successful or empty', function() {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/authors/top5",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "authors",
+                                "top5"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Co-Authors (v1)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Request successful', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/authors/{{authorNumber}}/coauthors",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "authors",
+                                "{{authorNumber}}",
+                                "coauthors"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Author Photo (v1)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Request successful', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/authors/{{authorNumber}}/photo",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "authors",
+                                "{{authorNumber}}",
+                                "photo"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "v2 - CQRS Endpoints",
+            "item": [
+                {
+                    "name": "Create Author (v2 CQRS)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Author created successfully via CQRS', function() {",
+                                    "    pm.response.to.have.status(201);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has authorNumber', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.authorNumber).to.exist;",
+                                    "    pm.collectionVariables.set('authorNumber', jsonData.authorNumber);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has HATEOAS links', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData._links).to.exist;",
+                                    "    pm.expect(jsonData._links.author).to.exist;",
+                                    "});",
+                                    "",
+                                    "pm.test('ETag header present', function() {",
+                                    "    pm.response.to.have.header('ETag');",
+                                    "    var etag = pm.response.headers.get('ETag');",
+                                    "    pm.collectionVariables.set('authorVersion', etag);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"CQRS Test Author\",\n    \"bio\": \"This author was created using the CQRS v2 endpoint with Command Bus pattern.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Author by Number (v2 CQRS)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Author retrieved successfully via Query Bus', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has required fields', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.authorNumber).to.exist;",
+                                    "    pm.expect(jsonData.name).to.exist;",
+                                    "    pm.expect(jsonData.bio).to.exist;",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has HATEOAS links', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData._links).to.exist;",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors/{{authorNumber}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors",
+                                "{{authorNumber}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Search Authors by Name (v2 CQRS)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Search successful via Query Bus', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has items array', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.items).to.be.an('array');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors?name=CQRS",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors"
+                            ],
+                            "query": [
+                                {
+                                    "key": "name",
+                                    "value": "CQRS"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Author (v2 CQRS)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Author updated successfully via Command Bus', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Bio was updated', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.bio).to.include('Updated');",
+                                    "});",
+                                    "",
+                                    "pm.test('New ETag returned', function() {",
+                                    "    pm.response.to.have.header('ETag');",
+                                    "    var etag = pm.response.headers.get('ETag');",
+                                    "    pm.collectionVariables.set('authorVersion', etag);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "If-Match",
+                                "value": "{{authorVersion}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Updated CQRS Author\",\n    \"bio\": \"Updated bio via CQRS v2 API endpoint using Command Bus pattern.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors/{{authorNumber}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors",
+                                "{{authorNumber}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Top 5 Authors (v2 CQRS)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Request successful or empty', function() {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                                    "});",
+                                    "",
+                                    "if (pm.response.code === 200) {",
+                                    "    pm.test('Response has items array', function() {",
+                                    "        var jsonData = pm.response.json();",
+                                    "        pm.expect(jsonData.items).to.be.an('array');",
+                                    "    });",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors/top5",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors",
+                                "top5"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Co-Authors (v2 CQRS)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Request successful', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has items array', function() {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.items).to.be.an('array');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors/{{authorNumber}}/coauthors",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors",
+                                "{{authorNumber}}",
+                                "coauthors"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Error Scenarios",
+            "item": [
+                {
+                    "name": "Get Non-Existent Author",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Returns 404 for non-existent author', function() {",
+                                    "    pm.response.to.have.status(404);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors/999999",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors",
+                                "999999"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Without If-Match Header",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Returns 400 for missing If-Match', function() {",
+                                    "    pm.response.to.have.status(400);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"bio\": \"This should fail\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors/{{authorNumber}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors",
+                                "{{authorNumber}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update With Wrong Version",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Returns conflict for wrong version', function() {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([409, 500]);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "If-Match",
+                                "value": "999"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"bio\": \"This should fail due to version mismatch\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors/{{authorNumber}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors",
+                                "{{authorNumber}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Author With Empty Name",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Returns validation error', function() {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([400, 409, 500]);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"\",\n    \"bio\": \"This should fail due to empty name\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Author With Empty Bio",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Returns validation error', function() {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([400, 409, 500]);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Author With Empty Bio\",\n    \"bio\": \"\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v2/authors",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v2",
+                                "authors"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}

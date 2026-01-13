@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lms-books-config
+  namespace: lms-books
+data:
+  # Spring profiles
+  SPRING_PROFILES_ACTIVE: "postgres,ci,bootstrap"
+
+  # Server config
+  SERVER_PORT: "8081"
+
+  # RabbitMQ config (shared between all instances)
+  SPRING_RABBITMQ_HOST: "rabbitmq-service"
+  SPRING_RABBITMQ_PORT: "5672"
+
+  # Database config is now per-instance (sidecar pattern)
+  # Each pod connects to localhost:5432 (its own PostgreSQL sidecar)
+  # See lms-books-statefulset.yaml for details #TODO: Maybe change if needed

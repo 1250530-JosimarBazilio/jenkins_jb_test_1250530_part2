@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/booksdb
+    username: postgres
+    password: password
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+
+server:
+  port: 0

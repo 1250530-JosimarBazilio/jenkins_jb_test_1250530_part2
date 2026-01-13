@@ -1,0 +1,53 @@
+# Traefik Dynamic Configuration para Blue/Green Deployment
+# Este ficheiro controla qual ambiente (blue/green) recebe o tráfego de produção
+#
+# Para alternar entre ambientes, modifique o weighted service abaixo:
+# - Para ativar BLUE: defina blue.weight=100 e green.weight=0
+# - Para ativar GREEN: defina blue.weight=0 e green.weight=100
+# - Para canary: distribua os pesos proporcionalmente (ex: 90/10)
+
+http:
+  routers:
+    # Router principal para produção
+    lms-books-production:
+      rule: "Host(`lms-books.localhost`) || Host(`api.lms-books.com`)"
+      entryPoints:
+        - web
+        - websecure
+      service: lms-books-weighted
+      priority: 10
+
+  services:
+    # Weighted Service para controlar o tráfego Blue/Green
+    lms-books-weighted:
+      weighted:
+        services:
+          - name: lms-books-blue
+            weight: 100 # BLUE está ativo (100% do tráfego)
+          - name: lms-books-green
+            weight: 0 # GREEN está inativo (0% do tráfego)
+        sticky:
+          cookie:
+            name: lms_books_sticky
+            secure: true
+            httpOnly: true
+
+    # Serviço Blue
+    lms-books-blue:
+      loadBalancer:
+        servers:
+          - url: "http://lms_books_blue:8090"
+        healthCheck:
+          path: /actuator/health
+          interval: "10s"
+          timeout: "3s"
+
+    # Serviço Green
+    lms-books-green:
+      loadBalancer:
+        servers:
+          - url: "http://lms_books_green:8090"
+        healthCheck:
+          path: /actuator/health
+          interval: "10s"
+          timeout: "3s"

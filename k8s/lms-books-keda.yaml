@@ -1,0 +1,130 @@
+# ===========================================
+# KEDA ScaledObject for LMS Books
+# ===========================================
+# KEDA (Kubernetes Event-Driven Autoscaling) provides
+# more advanced autoscaling based on:
+# - HTTP requests per second
+# - RabbitMQ queue length
+# - Custom Prometheus metrics
+#
+# Prerequisites:
+# 1. Install KEDA: kubectl apply -f https://github.com/kedacore/keda/releases/download/v2.12.0/keda-2.12.0.yaml
+# 2. Install KEDA HTTP Add-on (for HTTP-based scaling)
+
+---
+# ===========================================
+# HTTP-based Autoscaling (requests per second)
+# ===========================================
+apiVersion: http.keda.sh/v1alpha1
+kind: HTTPScaledObject
+metadata:
+  name: lms-books-http-scaler
+  namespace: lms-books
+spec:
+  hosts:
+    - lms-books.local
+    - lms-books-service.lms-books.svc.cluster.local
+  targetPendingRequests: 100 # Scale when pending requests > 100
+  scaleTargetRef:
+    deployment: lms-books
+    service: lms-books-service
+    port: 8081
+  replicas:
+    min: 2
+    max: 10
+
+---
+# ===========================================
+# RabbitMQ Queue-based Autoscaling
+# ===========================================
+# Scales based on RabbitMQ queue length
+# Useful when processing book events from the queue
+
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: lms-books-rabbitmq-scaler
+  namespace: lms-books
+spec:
+  scaleTargetRef:
+    name: lms-books
+  pollingInterval: 15 # Check every 15 seconds
+  cooldownPeriod: 300 # Wait 5 minutes before scaling down
+  minReplicaCount: 2
+  maxReplicaCount: 10
+  triggers:
+    # Scale based on RabbitMQ queue length
+    - type: rabbitmq
+      metadata:
+        protocol: amqp
+        queueName: book.events
+        mode: QueueLength
+        value: "50" # Scale when queue has > 50 messages
+      authenticationRef:
+        name: rabbitmq-trigger-auth
+
+---
+# ===========================================
+# RabbitMQ Authentication for KEDA
+# ===========================================
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: rabbitmq-trigger-auth
+  namespace: lms-books
+spec:
+  secretTargetRef:
+    - parameter: host
+      name: rabbitmq-keda-secret
+      key: host
+
+---
+# ===========================================
+# Secret for KEDA RabbitMQ connection
+# ===========================================
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rabbitmq-keda-secret
+  namespace: lms-books
+type: Opaque
+stringData:
+  host: "amqp://guest:guest@rabbitmq-service:5672/"
+
+---
+# ===========================================
+# Prometheus-based Autoscaling
+# ===========================================
+# Scales based on custom Prometheus metrics
+# Requires Prometheus to be installed and scraping metrics
+
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: lms-books-prometheus-scaler
+  namespace: lms-books
+spec:
+  scaleTargetRef:
+    name: lms-books
+  pollingInterval: 30
+  cooldownPeriod: 300
+  minReplicaCount: 2
+  maxReplicaCount: 10
+  triggers:
+    # Scale based on HTTP requests per second
+    - type: prometheus
+      metadata:
+        serverAddress: http://prometheus-server.monitoring.svc.cluster.local:9090
+        metricName: http_requests_per_second
+        threshold: "100" # Scale when RPS > 100
+        query: |
+          sum(rate(http_server_requests_seconds_count{namespace="lms-books", uri=~"/api/books.*"}[1m]))
+
+    # Scale based on response time
+    - type: prometheus
+      metadata:
+        serverAddress: http://prometheus-server.monitoring.svc.cluster.local:9090
+        metricName: http_response_time_p99
+        threshold: "2" # Scale when p99 latency > 2 seconds
+        query: |
+          histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket{namespace="lms-books"}[5m])) by (le))

@@ -1,0 +1,451 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1767478197600,335,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-1,,false,,2695,1201,1,1,null,0,1241,34
+1767478197970,52,GET Authors,400,,CRUD Operations 1-1,text,false,,529,186,1,1,http://localhost:8081/api/authors,45,0,33
+1767478198280,7,GET Genres,200,,CRUD Operations 1-1,text,true,,619,185,1,1,http://localhost:8081/api/genres,7,0,1
+1767478198496,196,CREATE Book,405,,CRUD Operations 1-1,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,1,1,http://localhost:8081/api/books,196,0,0
+1767478198894,10,READ Book,404,,CRUD Operations 1-1,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,1,1,http://localhost:8081/api/books/NOT_FOUND,9,0,0
+1767478199105,70,SEARCH Books,404,,CRUD Operations 1-1,text,false,,492,197,1,1,http://localhost:8081/api/books?title=JMeter,70,0,0
+1767478199177,46,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-1,,false,,2695,1201,2,2,null,0,1034,2
+1767478199378,16,GET Authors,400,,CRUD Operations 1-1,text,false,,529,186,1,1,http://localhost:8081/api/authors,15,0,0
+1767478199600,7,GET Genres,200,,CRUD Operations 1-1,text,true,,619,185,2,2,http://localhost:8081/api/genres,7,0,2
+1767478199816,6,CREATE Book,405,,CRUD Operations 1-1,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,2,2,http://localhost:8081/api/books,6,0,0
+1767478200024,10,READ Book,404,,CRUD Operations 1-1,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,2,2,http://localhost:8081/api/books/NOT_FOUND,10,0,0
+1767478200250,7,SEARCH Books,404,,CRUD Operations 1-1,text,false,,492,197,2,2,http://localhost:8081/api/books?title=JMeter,7,0,0
+1767478199591,365,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-2,,false,,2695,1201,2,2,null,0,1041,3
+1767478199802,80,GET Authors,400,,CRUD Operations 1-2,text,false,,529,186,2,2,http://localhost:8081/api/authors,80,0,1
+1767478200096,8,GET Genres,200,,CRUD Operations 1-2,text,true,,619,185,2,2,http://localhost:8081/api/genres,7,0,2
+1767478200312,160,CREATE Book,405,,CRUD Operations 1-2,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,2,2,http://localhost:8081/api/books,160,0,0
+1767478200677,98,READ Book,404,,CRUD Operations 1-2,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,2,2,http://localhost:8081/api/books/NOT_FOUND,98,0,0
+1767478200977,19,SEARCH Books,404,,CRUD Operations 1-2,text,false,,492,197,2,2,http://localhost:8081/api/books?title=JMeter,19,0,0
+1767478200258,41,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-1,,false,,2695,1201,2,2,null,0,1021,2
+1767478200462,5,GET Authors,400,,CRUD Operations 1-1,text,false,,529,186,2,2,http://localhost:8081/api/authors,4,0,0
+1767478200677,12,GET Genres,200,,CRUD Operations 1-1,text,true,,619,185,2,2,http://localhost:8081/api/genres,12,0,2
+1767478200892,6,CREATE Book,405,,CRUD Operations 1-1,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,2,2,http://localhost:8081/api/books,6,0,0
+1767478201100,9,READ Book,404,,CRUD Operations 1-1,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,2,2,http://localhost:8081/api/books/NOT_FOUND,9,0,0
+1767478201311,9,SEARCH Books,404,,CRUD Operations 1-1,text,false,,492,197,2,2,http://localhost:8081/api/books?title=JMeter,9,0,0
+1767478200997,34,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-2,,false,,2695,1201,3,3,null,0,1019,1
+1767478201198,4,GET Authors,400,,CRUD Operations 1-2,text,false,,529,186,2,2,http://localhost:8081/api/authors,4,0,0
+1767478201405,8,GET Genres,200,,CRUD Operations 1-2,text,true,,619,185,2,2,http://localhost:8081/api/genres,8,0,1
+1767478201615,5,CREATE Book,405,,CRUD Operations 1-2,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,3,3,http://localhost:8081/api/books,5,0,0
+1767478201827,9,READ Book,404,,CRUD Operations 1-2,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,3,3,http://localhost:8081/api/books/NOT_FOUND,9,0,0
+1767478202042,8,SEARCH Books,404,,CRUD Operations 1-2,text,false,,492,197,3,3,http://localhost:8081/api/books?title=JMeter,8,0,0
+1767478201321,33,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-1,,false,,2695,1201,3,3,null,0,1036,1
+1767478201523,4,GET Authors,400,,CRUD Operations 1-1,text,false,,529,186,2,2,http://localhost:8081/api/authors,4,0,0
+1767478201730,6,GET Genres,200,,CRUD Operations 1-1,text,true,,619,185,3,3,http://localhost:8081/api/genres,6,0,1
+1767478201950,6,CREATE Book,405,,CRUD Operations 1-1,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,3,3,http://localhost:8081/api/books,5,0,0
+1767478202158,10,READ Book,404,,CRUD Operations 1-1,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,3,3,http://localhost:8081/api/books/NOT_FOUND,10,0,0
+1767478202383,7,SEARCH Books,404,,CRUD Operations 1-1,text,false,,492,197,3,3,http://localhost:8081/api/books?title=JMeter,7,0,0
+1767478201589,33,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-3,,false,,2695,1201,3,3,null,0,1028,4
+1767478201797,7,GET Authors,400,,CRUD Operations 1-3,text,false,,529,186,3,3,http://localhost:8081/api/authors,7,0,2
+1767478202011,7,GET Genres,200,,CRUD Operations 1-3,text,true,,619,185,3,3,http://localhost:8081/api/genres,7,0,2
+1767478202219,6,CREATE Book,405,,CRUD Operations 1-3,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,3,3,http://localhost:8081/api/books,6,0,0
+1767478202430,5,READ Book,404,,CRUD Operations 1-3,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,3,3,http://localhost:8081/api/books/NOT_FOUND,5,0,0
+1767478202642,8,SEARCH Books,404,,CRUD Operations 1-3,text,false,,492,197,3,3,http://localhost:8081/api/books?title=JMeter,8,0,0
+1767478202050,31,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-2,,false,,2695,1201,3,3,null,0,1032,1
+1767478202265,4,GET Authors,400,,CRUD Operations 1-2,text,false,,529,186,3,3,http://localhost:8081/api/authors,4,0,0
+1767478202473,6,GET Genres,200,,CRUD Operations 1-2,text,true,,619,185,3,3,http://localhost:8081/api/genres,6,0,1
+1767478202688,4,CREATE Book,405,,CRUD Operations 1-2,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,3,3,http://localhost:8081/api/books,4,0,0
+1767478202894,9,READ Book,404,,CRUD Operations 1-2,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,3,3,http://localhost:8081/api/books/NOT_FOUND,9,0,0
+1767478203105,8,SEARCH Books,404,,CRUD Operations 1-2,text,false,,492,197,3,3,http://localhost:8081/api/books?title=JMeter,7,0,0
+1767478202390,32,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-1,,false,,2695,1201,3,3,null,0,1021,2
+1767478202596,4,GET Authors,400,,CRUD Operations 1-1,text,false,,529,186,3,3,http://localhost:8081/api/authors,4,0,0
+1767478202810,8,GET Genres,200,,CRUD Operations 1-1,text,true,,619,185,3,3,http://localhost:8081/api/genres,8,0,2
+1767478203019,5,CREATE Book,405,,CRUD Operations 1-1,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,3,3,http://localhost:8081/api/books,5,0,0
+1767478203226,9,READ Book,404,,CRUD Operations 1-1,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,3,3,http://localhost:8081/api/books/NOT_FOUND,9,0,0
+1767478203436,6,SEARCH Books,404,,CRUD Operations 1-1,text,false,,492,197,3,3,http://localhost:8081/api/books?title=JMeter,6,0,0
+1767478202651,31,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-3,,false,,2695,1201,3,3,null,0,1013,1
+1767478202857,5,GET Authors,400,,CRUD Operations 1-3,text,false,,529,186,3,3,http://localhost:8081/api/authors,4,0,0
+1767478203063,5,GET Genres,200,,CRUD Operations 1-3,text,true,,619,185,3,3,http://localhost:8081/api/genres,5,0,1
+1767478203270,6,CREATE Book,405,,CRUD Operations 1-3,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,3,3,http://localhost:8081/api/books,6,0,0
+1767478203477,9,READ Book,404,,CRUD Operations 1-3,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,2,2,http://localhost:8081/api/books/NOT_FOUND,9,0,0
+1767478203689,6,SEARCH Books,404,,CRUD Operations 1-3,text,false,,492,197,3,3,http://localhost:8081/api/books?title=JMeter,6,0,0
+1767478203113,56,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-2,,false,,2695,1201,3,3,null,0,1029,2
+1767478203314,4,GET Authors,400,,CRUD Operations 1-2,text,false,,529,186,3,3,http://localhost:8081/api/authors,4,0,0
+1767478203520,6,GET Genres,200,,CRUD Operations 1-2,text,true,,619,185,2,2,http://localhost:8081/api/genres,6,0,2
+1767478203739,24,CREATE Book,405,,CRUD Operations 1-2,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,3,3,http://localhost:8081/api/books,24,0,0
+1767478203970,10,READ Book,404,,CRUD Operations 1-2,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,3,3,http://localhost:8081/api/books/NOT_FOUND,10,0,0
+1767478204185,12,SEARCH Books,404,,CRUD Operations 1-2,text,false,,492,197,3,3,http://localhost:8081/api/books?title=JMeter,12,0,0
+1767478203589,38,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-4,,false,,2695,1201,3,3,null,0,1066,3
+1767478203801,5,GET Authors,400,,CRUD Operations 1-4,text,false,,529,186,3,3,http://localhost:8081/api/authors,5,0,2
+1767478204022,5,GET Genres,200,,CRUD Operations 1-4,text,true,,619,185,3,3,http://localhost:8081/api/genres,5,0,1
+1767478204238,4,CREATE Book,405,,CRUD Operations 1-4,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,3,3,http://localhost:8081/api/books,4,0,0
+1767478204457,18,READ Book,404,,CRUD Operations 1-4,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,3,3,http://localhost:8081/api/books/NOT_FOUND,17,0,0
+1767478204687,6,SEARCH Books,404,,CRUD Operations 1-4,text,false,,492,197,3,3,http://localhost:8081/api/books?title=JMeter,6,0,0
+1767478203696,60,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-3,,false,,2695,1201,3,3,null,0,1044,2
+1767478203909,4,GET Authors,400,,CRUD Operations 1-3,text,false,,529,186,3,3,http://localhost:8081/api/authors,3,0,0
+1767478204122,6,GET Genres,200,,CRUD Operations 1-3,text,true,,619,185,3,3,http://localhost:8081/api/genres,6,0,2
+1767478204335,37,CREATE Book,405,,CRUD Operations 1-3,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,3,3,http://localhost:8081/api/books,37,0,0
+1767478204573,7,READ Book,404,,CRUD Operations 1-3,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,3,3,http://localhost:8081/api/books/NOT_FOUND,7,0,0
+1767478204794,6,SEARCH Books,404,,CRUD Operations 1-3,text,false,,492,197,3,3,http://localhost:8081/api/books?title=JMeter,6,0,0
+1767478204198,69,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-2,,false,,2695,1201,3,3,null,0,1024,1
+1767478204411,5,GET Authors,400,,CRUD Operations 1-2,text,false,,529,186,3,3,http://localhost:8081/api/authors,5,0,0
+1767478204626,46,GET Genres,200,,CRUD Operations 1-2,text,true,,619,185,3,3,http://localhost:8081/api/genres,46,0,1
+1767478204873,5,CREATE Book,405,,CRUD Operations 1-2,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,3,3,http://localhost:8081/api/books,5,0,0
+1767478205078,7,READ Book,404,,CRUD Operations 1-2,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,3,3,http://localhost:8081/api/books/NOT_FOUND,7,0,0
+1767478205285,6,SEARCH Books,404,,CRUD Operations 1-2,text,false,,492,197,3,3,http://localhost:8081/api/books?title=JMeter,6,0,0
+1767478204693,32,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-4,,false,,2695,1201,3,3,null,0,1010,1
+1767478204894,4,GET Authors,400,,CRUD Operations 1-4,text,false,,529,186,3,3,http://localhost:8081/api/authors,3,0,0
+1767478205099,5,GET Genres,200,,CRUD Operations 1-4,text,true,,619,185,3,3,http://localhost:8081/api/genres,5,0,1
+1767478205305,6,CREATE Book,405,,CRUD Operations 1-4,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,2,2,http://localhost:8081/api/books,6,0,0
+1767478205512,9,READ Book,404,,CRUD Operations 1-4,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,2,2,http://localhost:8081/api/books/NOT_FOUND,9,0,0
+1767478205727,8,SEARCH Books,404,,CRUD Operations 1-4,text,false,,492,197,3,3,http://localhost:8081/api/books?title=JMeter,8,0,0
+1767478204800,33,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-3,,false,,2695,1201,3,3,null,0,1017,1
+1767478205001,4,GET Authors,400,,CRUD Operations 1-3,text,false,,529,186,3,3,http://localhost:8081/api/authors,3,0,0
+1767478205206,6,GET Genres,200,,CRUD Operations 1-3,text,true,,619,185,3,3,http://localhost:8081/api/genres,6,0,1
+1767478205413,6,CREATE Book,405,,CRUD Operations 1-3,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,2,2,http://localhost:8081/api/books,6,0,0
+1767478205629,8,READ Book,404,,CRUD Operations 1-3,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,3,3,http://localhost:8081/api/books/NOT_FOUND,8,0,0
+1767478205840,9,SEARCH Books,404,,CRUD Operations 1-3,text,false,,492,197,3,3,http://localhost:8081/api/books?title=JMeter,9,0,0
+1767478205586,36,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-5,,false,,2695,1201,3,3,null,0,1043,2
+1767478205789,6,GET Authors,400,,CRUD Operations 1-5,text,false,,529,186,3,3,http://localhost:8081/api/authors,6,0,1
+1767478206008,6,GET Genres,200,,CRUD Operations 1-5,text,true,,619,185,3,3,http://localhost:8081/api/genres,6,0,1
+1767478206227,4,CREATE Book,405,,CRUD Operations 1-5,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,3,3,http://localhost:8081/api/books,4,0,0
+1767478206442,12,READ Book,404,,CRUD Operations 1-5,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,3,3,http://localhost:8081/api/books/NOT_FOUND,12,0,0
+1767478206657,8,SEARCH Books,404,,CRUD Operations 1-5,text,false,,492,197,3,3,http://localhost:8081/api/books?title=JMeter,8,0,0
+1767478205735,32,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-4,,false,,2695,1201,3,3,null,0,1036,2
+1767478205946,6,GET Authors,400,,CRUD Operations 1-4,text,false,,529,186,3,3,http://localhost:8081/api/authors,6,0,0
+1767478206155,5,GET Genres,200,,CRUD Operations 1-4,text,true,,619,185,3,3,http://localhost:8081/api/genres,5,0,2
+1767478206362,4,CREATE Book,405,,CRUD Operations 1-4,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,3,3,http://localhost:8081/api/books,4,0,0
+1767478206575,7,READ Book,404,,CRUD Operations 1-4,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,3,3,http://localhost:8081/api/books/NOT_FOUND,7,0,0
+1767478206793,10,SEARCH Books,404,,CRUD Operations 1-4,text,false,,492,197,3,3,http://localhost:8081/api/books?title=JMeter,10,0,0
+1767478205850,32,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-3,,false,,2695,1201,3,3,null,0,1040,2
+1767478206061,4,GET Authors,400,,CRUD Operations 1-3,text,false,,529,186,3,3,http://localhost:8081/api/authors,4,0,0
+1767478206276,7,GET Genres,200,,CRUD Operations 1-3,text,true,,619,185,3,3,http://localhost:8081/api/genres,7,0,2
+1767478206488,4,CREATE Book,405,,CRUD Operations 1-3,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,3,3,http://localhost:8081/api/books,4,0,0
+1767478206699,9,READ Book,404,,CRUD Operations 1-3,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,3,3,http://localhost:8081/api/books/NOT_FOUND,9,0,0
+1767478206913,8,SEARCH Books,404,,CRUD Operations 1-3,text,false,,492,197,3,3,http://localhost:8081/api/books?title=JMeter,8,0,0
+1767478206666,31,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-5,,false,,2695,1201,2,2,null,0,1052,1
+1767478206877,5,GET Authors,400,,CRUD Operations 1-5,text,false,,529,186,3,3,http://localhost:8081/api/authors,5,0,0
+1767478207086,9,GET Genres,200,,CRUD Operations 1-5,text,true,,619,185,2,2,http://localhost:8081/api/genres,9,0,1
+1767478207307,4,CREATE Book,405,,CRUD Operations 1-5,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,2,2,http://localhost:8081/api/books,4,0,0
+1767478207526,7,READ Book,404,,CRUD Operations 1-5,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,2,2,http://localhost:8081/api/books/NOT_FOUND,7,0,0
+1767478207743,6,SEARCH Books,404,,CRUD Operations 1-5,text,false,,492,197,2,2,http://localhost:8081/api/books?title=JMeter,6,0,0
+1767478206804,28,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-4,,false,,2695,1201,2,2,null,0,1052,1
+1767478207008,4,GET Authors,400,,CRUD Operations 1-4,text,false,,529,186,2,2,http://localhost:8081/api/authors,3,0,0
+1767478207225,5,GET Genres,200,,CRUD Operations 1-4,text,true,,619,185,2,2,http://localhost:8081/api/genres,5,0,1
+1767478207446,6,CREATE Book,405,,CRUD Operations 1-4,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,2,2,http://localhost:8081/api/books,6,0,0
+1767478207662,7,READ Book,404,,CRUD Operations 1-4,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,2,2,http://localhost:8081/api/books/NOT_FOUND,7,0,0
+1767478207879,6,SEARCH Books,404,,CRUD Operations 1-4,text,false,,492,197,2,2,http://localhost:8081/api/books?title=JMeter,6,0,0
+1767478207750,26,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-5,,false,,2695,1201,2,2,null,0,1042,1
+1767478207962,3,GET Authors,400,,CRUD Operations 1-5,text,false,,529,186,2,2,http://localhost:8081/api/authors,3,0,0
+1767478208167,5,GET Genres,200,,CRUD Operations 1-5,text,true,,619,185,2,2,http://localhost:8081/api/genres,5,0,1
+1767478208375,4,CREATE Book,405,,CRUD Operations 1-5,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,2,2,http://localhost:8081/api/books,4,0,0
+1767478208590,8,READ Book,404,,CRUD Operations 1-5,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,2,2,http://localhost:8081/api/books/NOT_FOUND,8,0,0
+1767478208812,6,SEARCH Books,404,,CRUD Operations 1-5,text,false,,492,197,2,2,http://localhost:8081/api/books?title=JMeter,6,0,0
+1767478207886,27,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-4,,false,,2695,1201,2,2,null,0,1040,1
+1767478208093,3,GET Authors,400,,CRUD Operations 1-4,text,false,,529,186,2,2,http://localhost:8081/api/authors,3,0,0
+1767478208298,6,GET Genres,200,,CRUD Operations 1-4,text,true,,619,185,2,2,http://localhost:8081/api/genres,5,0,1
+1767478208513,5,CREATE Book,405,,CRUD Operations 1-4,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,2,2,http://localhost:8081/api/books,5,0,0
+1767478208729,6,READ Book,404,,CRUD Operations 1-4,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,2,2,http://localhost:8081/api/books/NOT_FOUND,6,0,0
+1767478208946,7,SEARCH Books,404,,CRUD Operations 1-4,text,false,,492,197,2,2,http://localhost:8081/api/books?title=JMeter,7,0,0
+1767478208819,25,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-5,,false,,2695,1201,1,1,null,0,1030,2
+1767478209026,4,GET Authors,400,,CRUD Operations 1-5,text,false,,529,186,1,1,http://localhost:8081/api/authors,4,0,0
+1767478209231,6,GET Genres,200,,CRUD Operations 1-5,text,true,,619,185,1,1,http://localhost:8081/api/genres,6,0,2
+1767478209446,4,CREATE Book,405,,CRUD Operations 1-5,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,1,1,http://localhost:8081/api/books,4,0,0
+1767478209661,6,READ Book,404,,CRUD Operations 1-5,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,1,1,http://localhost:8081/api/books/NOT_FOUND,6,0,0
+1767478209869,5,SEARCH Books,404,,CRUD Operations 1-5,text,false,,492,197,1,1,http://localhost:8081/api/books?title=JMeter,5,0,0
+1767478209874,31,Complete CRUD Cycle,400,"Number of samples in transaction : 5, number of failing samples : 4",CRUD Operations 1-5,,false,,2695,1201,1,1,null,0,1055,1
+1767478210080,3,GET Authors,400,,CRUD Operations 1-5,text,false,,529,186,1,1,http://localhost:8081/api/authors,3,0,0
+1767478210298,5,GET Genres,200,,CRUD Operations 1-5,text,true,,619,185,1,1,http://localhost:8081/api/genres,5,0,1
+1767478210511,4,CREATE Book,405,,CRUD Operations 1-5,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[405]]]
+
+****** comparison: [[[201]]]
+
+/",565,439,1,1,http://localhost:8081/api/books,4,0,0
+1767478210729,11,READ Book,404,,CRUD Operations 1-5,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[404]]]
+
+****** comparison: [[[200]]]
+
+/",490,194,1,1,http://localhost:8081/api/books/NOT_FOUND,11,0,0
+1767478210952,8,SEARCH Books,404,,CRUD Operations 1-5,text,false,,492,197,1,1,http://localhost:8081/api/books?title=JMeter,8,0,0

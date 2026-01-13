@@ -1,0 +1,190 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: lms-books
+  namespace: lms-books
+  labels:
+    app: lms-books
+spec:
+  serviceName: lms-books-headless
+  replicas: 3
+  selector:
+    matchLabels:
+      app: lms-books
+  template:
+    metadata:
+      labels:
+        app: lms-books
+    spec:
+      initContainers:
+        # Wait for RabbitMQ to be ready
+        - name: wait-for-rabbitmq
+          image: busybox:1.36
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z rabbitmq-service 5672; do echo waiting for rabbitmq; sleep 2; done;",
+            ]
+      containers:
+        # PostgreSQL Sidecar - each pod has its own database
+        - name: postgres
+          image: postgres:17
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_DB
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "250m"
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - postgres
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - postgres
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+        # LMS Books Application
+        - name: lms-books
+          image: lms-books:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+              name: http
+          env:
+            # Instance identification
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: SPRING_APPLICATION_INSTANCE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            # Database config - connect to localhost (sidecar)
+            - name: SPRING_PROFILES_ACTIVE
+              value: "postgres,ci,bootstrap"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://localhost:5432/booksdb"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            # RabbitMQ config - shared message broker
+            - name: SPRING_RABBITMQ_HOST
+              value: "rabbitmq-service"
+            - name: SPRING_RABBITMQ_PORT
+              value: "5672"
+            - name: SPRING_RABBITMQ_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: RABBITMQ_DEFAULT_USER
+            - name: SPRING_RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: RABBITMQ_DEFAULT_PASS
+            - name: SERVER_PORT
+              value: "8081"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            tcpSocket:
+              port: 8081
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            failureThreshold: 5
+          readinessProbe:
+            tcpSocket:
+              port: 8081
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 5
+
+  # Each pod gets its own PVC for PostgreSQL data
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+---
+# Headless Service for StatefulSet (required for stable network identities)
+apiVersion: v1
+kind: Service
+metadata:
+  name: lms-books-headless
+  namespace: lms-books
+spec:
+  clusterIP: None
+  selector:
+    app: lms-books
+  ports:
+    - port: 8081
+      targetPort: 8081
+      name: http
+    - port: 5432
+      targetPort: 5432
+      name: postgres
+---
+# Regular Service for load balancing external access
+apiVersion: v1
+kind: Service
+metadata:
+  name: lms-books-service
+  namespace: lms-books
+spec:
+  selector:
+    app: lms-books
+  ports:
+    - port: 8081
+      targetPort: 8081
+      name: http
+  type: LoadBalancer

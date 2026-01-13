@@ -1,0 +1,332 @@
+# Kubernetes Blue/Green Deployment Strategy
+# Este ficheiro define dois deployments idênticos (blue e green)
+# O Service seleciona qual deployment recebe tráfego através do label 'slot'
+
+---
+# ===========================================
+# DEPLOYMENT BLUE
+# ===========================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lms-books-blue
+  namespace: lms-books
+  labels:
+    app: lms-books
+    slot: blue
+    version: "${BLUE_VERSION}"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: lms-books
+      slot: blue
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: lms-books
+        slot: blue
+        version: "${BLUE_VERSION}"
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox:1.36
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z postgres-service 5432; do echo waiting for postgres; sleep 2; done;",
+            ]
+        - name: wait-for-rabbitmq
+          image: busybox:1.36
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z rabbitmq-service 5672; do echo waiting for rabbitmq; sleep 2; done;",
+            ]
+      containers:
+        - name: lms-books
+          image: ${DOCKER_REGISTRY}/lms-books:${BLUE_VERSION}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: SPRING_APPLICATION_INSTANCE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: SPRING_PROFILES_ACTIVE
+              value: "postgres,production"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres-service:5432/booksdb"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: SPRING_RABBITMQ_HOST
+              value: "rabbitmq-service"
+            - name: SPRING_RABBITMQ_PORT
+              value: "5672"
+            - name: SPRING_RABBITMQ_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: RABBITMQ_DEFAULT_USER
+            - name: SPRING_RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: RABBITMQ_DEFAULT_PASS
+            - name: SERVER_PORT
+              value: "8081"
+            - name: DEPLOYMENT_SLOT
+              value: "blue"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8081
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8081
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 5
+
+---
+# ===========================================
+# DEPLOYMENT GREEN
+# ===========================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lms-books-green
+  namespace: lms-books
+  labels:
+    app: lms-books
+    slot: green
+    version: "${GREEN_VERSION}"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: lms-books
+      slot: green
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: lms-books
+        slot: green
+        version: "${GREEN_VERSION}"
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox:1.36
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z postgres-service 5432; do echo waiting for postgres; sleep 2; done;",
+            ]
+        - name: wait-for-rabbitmq
+          image: busybox:1.36
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z rabbitmq-service 5672; do echo waiting for rabbitmq; sleep 2; done;",
+            ]
+      containers:
+        - name: lms-books
+          image: ${DOCKER_REGISTRY}/lms-books:${GREEN_VERSION}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: SPRING_APPLICATION_INSTANCE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: SPRING_PROFILES_ACTIVE
+              value: "postgres,production"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres-service:5432/booksdb"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: SPRING_RABBITMQ_HOST
+              value: "rabbitmq-service"
+            - name: SPRING_RABBITMQ_PORT
+              value: "5672"
+            - name: SPRING_RABBITMQ_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: RABBITMQ_DEFAULT_USER
+            - name: SPRING_RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: RABBITMQ_DEFAULT_PASS
+            - name: SERVER_PORT
+              value: "8081"
+            - name: DEPLOYMENT_SLOT
+              value: "green"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8081
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8081
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 5
+
+---
+# ===========================================
+# SERVICE PRINCIPAL (Controla qual slot recebe tráfego)
+# ===========================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: lms-books-service
+  namespace: lms-books
+  labels:
+    app: lms-books
+spec:
+  selector:
+    app: lms-books
+    slot: blue # Alterar para 'green' para fazer switch
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 8081
+  type: ClusterIP
+
+---
+# ===========================================
+# SERVICES DIRETOS (para testes internos)
+# ===========================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: lms-books-blue-service
+  namespace: lms-books
+  labels:
+    app: lms-books
+    slot: blue
+spec:
+  selector:
+    app: lms-books
+    slot: blue
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 8081
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lms-books-green-service
+  namespace: lms-books
+  labels:
+    app: lms-books
+    slot: green
+spec:
+  selector:
+    app: lms-books
+    slot: green
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 8081
+  type: ClusterIP
+
+---
+# ===========================================
+# INGRESS ROUTE (Traefik)
+# ===========================================
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: lms-books-bluegreen-ingress
+  namespace: lms-books
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    # Rota principal de produção
+    - match: Host(`lms-books.localhost`) || PathPrefix(`/api/books`)
+      kind: Rule
+      services:
+        - name: lms-books-service
+          port: 8081
+    # Rota direta para Blue (testes)
+    - match: Host(`blue.lms-books.localhost`)
+      kind: Rule
+      services:
+        - name: lms-books-blue-service
+          port: 8081
+    # Rota direta para Green (testes)
+    - match: Host(`green.lms-books.localhost`)
+      kind: Rule
+      services:
+        - name: lms-books-green-service
+          port: 8081

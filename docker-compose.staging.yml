@@ -1,0 +1,67 @@
+services:
+  postgres_books_staging:
+    container_name: postgres_books_staging
+    image: postgres:17
+    restart: unless-stopped
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password_staging
+      POSTGRES_DB: booksdb_staging
+    volumes:
+      - postgres_books_staging_volume:/var/lib/postgresql/data
+    networks:
+      - lms_staging_network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+
+  rabbitmq_staging:
+    container_name: rabbitmq_lms_staging
+    image: rabbitmq:3-management
+    restart: unless-stopped
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - lms_staging_network
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+
+  lms-books-staging:
+    container_name: lms_books_staging
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8091:8090"
+    environment:
+      - SPRING_PROFILES_ACTIVE=postgres,staging
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_books_staging:5432/booksdb_staging
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password_staging
+      - SPRING_RABBITMQ_HOST=rabbitmq_staging
+      - SERVER_PORT=8090
+    depends_on:
+      postgres_books_staging:
+        condition: service_healthy
+      rabbitmq_staging:
+        condition: service_healthy
+    networks:
+      - lms_staging_network
+
+networks:
+  lms_staging_network:
+    name: lms_staging_network
+
+volumes:
+  postgres_books_staging_volume:

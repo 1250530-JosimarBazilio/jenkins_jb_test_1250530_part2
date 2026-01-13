@@ -1,0 +1,65 @@
+services:
+  postgres_books_prod:
+    container_name: postgres_books_prod
+    image: postgres:17
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password_prod}
+      POSTGRES_DB: booksdb_prod
+    volumes:
+      - postgres_books_prod_volume:/var/lib/postgresql/data
+    networks:
+      - lms_prod_network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+
+  rabbitmq_prod:
+    container_name: rabbitmq_lms_prod
+    image: rabbitmq:3-management
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+    networks:
+      - lms_prod_network
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+
+  lms-books-prod:
+    container_name: lms_books_prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8090:8090"
+    environment:
+      - SPRING_PROFILES_ACTIVE=postgres,production
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_books_prod:5432/booksdb_prod
+      - SPRING_RABBITMQ_HOST=rabbitmq_prod
+      - SERVER_PORT=8090
+    depends_on:
+      postgres_books_prod:
+        condition: service_healthy
+      rabbitmq_prod:
+        condition: service_healthy
+    networks:
+      - lms_prod_network
+
+networks:
+  lms_prod_network:
+    name: lms_prod_network
+
+volumes:
+  postgres_books_prod_volume:

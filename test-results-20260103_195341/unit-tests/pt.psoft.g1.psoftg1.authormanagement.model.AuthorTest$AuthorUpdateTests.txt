@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: pt.psoft.g1.psoftg1.authormanagement.model.AuthorTest$AuthorUpdateTests
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 s -- in pt.psoft.g1.psoftg1.authormanagement.model.AuthorTest$AuthorUpdateTests
