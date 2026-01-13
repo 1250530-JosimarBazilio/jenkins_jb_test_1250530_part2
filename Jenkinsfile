@@ -177,9 +177,6 @@ pipeline {
                     branch 'production'
                 }
             }
-            options {
-                timeout(time: env.APPROVAL_TIMEOUT_HOURS.toInteger(), unit: 'HOURS')
-            }
             steps {
                 script {
                     def approvalResult = input(
