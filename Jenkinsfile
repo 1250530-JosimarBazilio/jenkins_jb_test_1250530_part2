@@ -378,7 +378,7 @@ pipeline {
                 }
             }
             options {
-                timeout(time: "${APPROVAL_TIMEOUT_HOURS}".toInteger(), unit: 'HOURS')
+                timeout(time: Integer.parseInt(APPROVAL_TIMEOUT_HOURS), unit: 'HOURS')
             }
             steps {
                 script {
