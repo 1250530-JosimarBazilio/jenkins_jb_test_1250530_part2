@@ -177,17 +177,15 @@ pipeline {
                     branch 'production'
                 }
             }
-            options {
-                timeout(time: "24".toInteger(), unit: 'HOURS')
-            }
             steps {
-                script {
-                    def approvalResult = input(
-                        id: 'production-deployment-approval',
-                        message: '🚀 Approve Production Deployment?',
-                        submitter: 'admin,devops,release-manager',
-                        submitterParameter: 'approver',
-                        parameters: [
+                timeout(time: 24, unit: 'HOURS') {
+                    script {
+                        def approvalResult = input(
+                            id: 'production-deployment-approval',
+                            message: '🚀 Approve Production Deployment?',
+                            submitter: 'admin,devops,release-manager',
+                            submitterParameter: 'approver',
+                            parameters: [
                             choice(
                                 name: 'APPROVAL_DECISION',
                                 choices: ['Approve', 'Reject'],
